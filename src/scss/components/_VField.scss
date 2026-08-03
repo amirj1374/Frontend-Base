@@ -1,0 +1,9 @@
+.v-field--variant-outlined .v-field__outline__start {
+  border-start-start-radius: var(--app-text-field-radius, 10px);
+  border-end-start-radius: var(--app-text-field-radius, 10px);
+}
+
+.v-field--variant-outlined .v-field__outline__end {
+  border-start-end-radius: var(--app-text-field-radius, 10px);
+  border-end-end-radius: var(--app-text-field-radius, 10px);
+}

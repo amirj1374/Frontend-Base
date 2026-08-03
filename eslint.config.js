@@ -1,0 +1,42 @@
+import globals from 'globals';
+import pluginJs from '@eslint/js';
+import tseslint from 'typescript-eslint';
+import pluginVue from 'eslint-plugin-vue';
+
+export default [
+  {
+    ignores: ['dist/**', 'coverage/**', 'node_modules/**']
+  },
+  {
+    files: ['*.config.{js,ts}', 'scripts/**/*.{js,mjs,cjs}'],
+    languageOptions: { globals: globals.node }
+  },
+  {
+    languageOptions: {
+      globals: globals.browser,
+      parserOptions: {
+        parser: '@typescript-eslint/parser'
+      }
+    }
+  },
+  pluginJs.configs.recommended,
+  ...tseslint.configs.recommended,
+  ...pluginVue.configs['flat/essential'],
+  {
+    files: ['src/components/sections/**/relatedInfo.vue'],
+    // Legacy Vuetify dynamic slot syntax compiles successfully but is not
+    // understood by this ESLint/Vue parser combination. Keep it scoped until
+    // those business components can be migrated with characterization tests.
+    rules: { 'vue/valid-v-slot': 'off' }
+  },
+  {
+    files: ['**/*.{js,ts,vue}'],
+    rules: {
+      'no-unused-vars': 'warn',
+      'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'warn',
+      '@typescript-eslint/no-unused-vars': 'warn',
+      '@typescript-eslint/no-explicit-any': 'warn',
+      'vue/multi-word-component-names': 'warn'
+    }
+  }
+];
