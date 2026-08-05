@@ -220,7 +220,7 @@ const lineChart1 = computed(() => ({
       <v-card-text>
         <v-row>
           <v-col cols="12" sm="9">
-            <h3 class="text-h3 mt-1">وضعیت اخطار های کتبی</h3>
+            <h3 class="text-h3 mt-1">نمونه چارت</h3>
           </v-col>
           <v-col cols="12" sm="3">
             <v-select

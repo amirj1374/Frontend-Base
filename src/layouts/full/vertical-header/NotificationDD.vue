@@ -35,7 +35,7 @@ const selectNotify = ref<string>('همه اعلان ها');
           <span class="text-subtitle-2 text-medium-emphasis">2 mins ago</span>
         </div>
 
-        <p class="text-subtitle-2 text-medium-emphasis mt-1">اولین نسخه از سیستم وصول مطالبات جدید به زودی در دسترس کاربران قرار میگیرد.</p>
+        <p class="text-subtitle-2 text-medium-emphasis mt-1">زیر ساخت پروژه فرانت (در این قسمت میتوانید اعلان ها را مشاهده کنید)</p>
         <div class="mt-3">
 <!--          <v-chip size="small" text="خوانده نشده" color="error" variant="tonal" class="ml-2" />-->
           <v-chip size="small" text="جدید" color="warning" variant="tonal" />

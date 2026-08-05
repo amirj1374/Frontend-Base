@@ -117,7 +117,7 @@ const chartOptions = computed(() => ({
   <v-card elevation="0" class="h-100 d-flex flex-column">
     <v-card class="flex-grow-1">
       <v-card-text>
-        <h3 class="text-h3 mt-1">سوابق مکاتبات پرونده</h3>
+        <h3 class="text-h3 mt-1">نمونه</h3>
         <div class="mt-4">
           <template v-if="isLoading">
             <div class="d-flex justify-center py-8">
