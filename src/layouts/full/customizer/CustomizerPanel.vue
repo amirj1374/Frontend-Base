@@ -379,7 +379,7 @@ onMounted(() => {
               <div class="pa-4">
                 <!-- THEME MODE -->
                 <div class="mb-6">
-                  <h6 class="text-subtitle-1 font-weight-medium mb-3">حالت روز / شب</h6>
+                  <h6 class="text-subtitle-1 font-weight-bold mb-3">حالت روز / شب</h6>
                   <div class="theme-toggle-container">
                     <div
                       class="theme-toggle"
@@ -398,7 +398,7 @@ onMounted(() => {
 
                 <!-- PRESET COLOR -->
                 <div class="mb-6">
-                  <h6 class="text-subtitle-1 font-weight-medium mb-3">رنگ بندی</h6>
+                  <h6 class="text-subtitle-1 font-weight-bold mb-3">رنگ بندی</h6>
                   <div class="custom-theme-colors">
                     <div
                       v-for="color in colorPalette"
@@ -475,7 +475,7 @@ onMounted(() => {
 
                 <!-- Menu Orientation -->
                 <div class="mb-6">
-                  <h6 class="text-subtitle-1 font-weight-medium mt-3 mb-3">انواع منو</h6>
+                  <h6 class="text-subtitle-1 font-weight-bold mt-3 mb-3">انواع منو</h6>
                   <div class="d-flex gap-2">
                     <v-btn
                       variant="outlined"
