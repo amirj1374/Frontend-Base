@@ -341,7 +341,15 @@ onMounted(() => {
 </script>
 
 <template>
-  <v-navigation-drawer app temporary elevation="10" location="left" v-model="customizer.Customizer_drawer" :width="customizerDrawerWidth" class="customizer-drawer">
+  <v-navigation-drawer
+    app
+    temporary
+    elevation="10"
+    location="left"
+    v-model="customizer.Customizer_drawer"
+    :width="customizerDrawerWidth"
+    class="customizer-drawer"
+  >
     <perfect-scrollbar class="customizer-scroll">
       <v-col cols="12" class="pa-0">
         <div class="pa-5 d-flex justify-space-between align-center">
@@ -467,7 +475,7 @@ onMounted(() => {
 
                 <!-- Menu Orientation -->
                 <div class="mb-6">
-                  <h6 class="text-subtitle-1 font-weight-medium mb-3">انواع منو</h6>
+                  <h6 class="text-subtitle-1 font-weight-medium mt-3 mb-3">انواع منو</h6>
                   <div class="d-flex gap-2">
                     <v-btn
                       variant="outlined"
