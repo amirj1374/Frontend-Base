@@ -14,6 +14,12 @@ const MainRoutes = {
       meta: { requiresAuth: true, permission: '' },
       component: () => import('@/views/dashboards/default/Dashboard.vue')
     },
+    {
+      path: '/components',
+      name: ROUTE_NAMES.componentShowcase,
+      meta: { requiresAuth: true, permission: '' },
+      component: () => import('@/views/ComponentShowcase.vue')
+    }
   ]
 };
 

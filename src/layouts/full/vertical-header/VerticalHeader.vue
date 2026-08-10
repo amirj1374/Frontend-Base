@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { useCustomizerStore } from '@/stores/customizer';
+import { useCustomizerStore } from '@amirjalili1374/ui-kit';
 import { useCustomerInfoStore } from '@/stores/customerInfo';
 import { getFilteredSidebarItems } from '../vertical-sidebar/sidebarItem';
 import { AppHeader } from '@amirjalili1374/ui-kit';

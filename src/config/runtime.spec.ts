@@ -32,6 +32,7 @@ describe('createRuntimeConfig', () => {
       auth: {},
       debug: true,
       devPermissionBypass: false,
+      customizerEndpoint: 'api/v1/customizer',
       appTitle: 'Test application',
       appEnv: 'test'
     });

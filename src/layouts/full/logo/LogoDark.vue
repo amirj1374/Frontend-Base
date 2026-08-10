@@ -8,14 +8,17 @@
 <script setup lang="ts">
 import vuetify from '@/plugins/vuetify';
 import { RouterLink } from 'vue-router';
-import { useCustomizerStore } from '@/stores/customizer';
-import { ref, watch } from 'vue';
-const currentTheme = useCustomizerStore()
-const currentColorText = ref(vuetify.theme.themes.value[currentTheme.actTheme].colors.darkText)
+import { useCustomizerStore } from '@amirjalili1374/ui-kit';
+import { computed } from 'vue';
 
-watch(() => currentTheme.getActTheme, (newTheme) => {
-  if (newTheme) {
-    currentColorText.value = vuetify.theme.themes.value[newTheme].colors.darkText
-  }
+const currentTheme = useCustomizerStore();
+
+// The executive shell has a deliberately dark navigation surface. Keep the
+// wordmark readable there while leaving the existing logo treatment untouched
+// for every other visual mode.
+const currentColorText = computed(() => {
+  if (currentTheme.surfaceStyle === 'premium-executive') return '#F5F7FA';
+
+  return vuetify.theme.themes.value[currentTheme.actTheme]?.colors.darkText ?? '#1F2937';
 });
 </script>

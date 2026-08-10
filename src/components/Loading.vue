@@ -19,7 +19,7 @@
 
 <script setup lang="ts">
 import { Vue3Lottie } from 'vue3-lottie';
-import { useCustomizerStore } from '@/stores/customizer';
+import { useCustomizerStore } from '@amirjalili1374/ui-kit';
 
 const customizer = useCustomizerStore();
 </script>

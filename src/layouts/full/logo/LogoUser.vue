@@ -23,7 +23,7 @@
 </template>
 <script setup lang="ts">
 import vuetify from '@/plugins/vuetify';
-import { useCustomizerStore } from '@/stores/customizer';
+import { useCustomizerStore } from '@amirjalili1374/ui-kit';
 import { ref, watch } from 'vue';
 const currentTheme = useCustomizerStore();
 const currentColorText = ref(vuetify.theme.themes.value[currentTheme.actTheme].colors.primary);

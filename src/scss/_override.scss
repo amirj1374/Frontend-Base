@@ -1,9 +1,64 @@
 html {
   font-size: calc(16px * var(--app-text-scale, 1));
+  direction: rtl;
+  --v-theme-primary: var(--app-scrollbar-primary, 126, 87, 194);
+
+  /* In RTL the document scrollbar intentionally stays on the left, leaving
+     the right edge free for the navigation drawer. Keep the page thumb visibly
+     tied to the active Vuetify primary colour. */
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(var(--app-scrollbar-primary, var(--v-theme-primary)), 0.06) !important;
+  }
+
+  &::-webkit-scrollbar-button {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgb(var(--app-scrollbar-primary, var(--v-theme-primary))) !important;
+    border: 2px solid transparent !important;
+    background-clip: content-box !important;
+  }
 
   .bg-success {
     color: white !important;
   }
+}
+
+/* The actual page scroller can be html, body, or a Vuetify container depending
+   on the page. Give every one the same RTL position and active theme thumb. */
+body {
+  direction: rtl;
+}
+
+.v-application,
+.v-application * {
+  scrollbar-color: rgb(var(--v-theme-primary)) transparent !important;
+}
+
+.v-application ::-webkit-scrollbar-thumb {
+  background: rgb(var(--v-theme-primary)) !important;
+}
+
+.v-application ::-webkit-scrollbar-track {
+  background: rgba(var(--v-theme-primary), 0.06) !important;
+}
+
+.v-main::-webkit-scrollbar-button,
+.v-main::-webkit-scrollbar-button:single-button,
+.v-main::-webkit-scrollbar-button:vertical:increment,
+.v-main::-webkit-scrollbar-button:vertical:decrement {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  max-height: 0 !important;
 }
 * {
   /* Scrollbar – Windows 11 Style */

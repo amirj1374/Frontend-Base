@@ -2,6 +2,32 @@ html {
   overflow-y: auto;
 }
 
+/* Chrome keeps the document scrollbar on the physical right edge on Windows.
+   The application workspace therefore owns scrolling, so RTL places its
+   scrollbar on the left without affecting the fixed navigation drawer. */
+html,
+body,
+#app {
+  height: 100%;
+  overflow: hidden;
+}
+
+.v-application {
+  height: 100%;
+  overflow: hidden;
+}
+
+.v-main {
+  height: 100vh;
+  overflow-y: auto;
+  direction: rtl;
+  scrollbar-color: rgb(var(--v-theme-primary)) transparent;
+}
+
+.v-main::-webkit-scrollbar-thumb {
+  background: rgb(var(--v-theme-primary)) !important;
+}
+
 :root {
   --font-theme: 'vazir', sans-serif; /* Default font */
 }
@@ -27,6 +53,7 @@ html {
   padding: 15px;
   border-radius: $border-radius-root;
   background: rgb(var(--v-theme-containerBg));
+  transition: max-width 220ms ease-out, margin-inline 220ms ease-out, background-color 180ms ease-out;
 }
 
 .customizer-loading {
@@ -74,27 +101,71 @@ $sizes: (
 
 @font-face {
   font-family: 'yekanLight';
-  src: url('/src/assets/fonts/BYekan.woff') format('woff');
+  src: url('/src/assets/fonts/BYekan.woff2') format('woff2');
   font-weight: 300;
   font-style: normal;
+  font-display: optional;
+}
+
+/* The canvas owns the container background. This keeps the coloured workspace
+   full-width when the content area is deliberately constrained below. */
+.v-main {
+  background: rgb(var(--v-theme-containerBg));
+}
+
+/* Visual-only Customizer preference. On small screens content stays fluid so
+   forms and tables retain their responsive behaviour. */
+@media (min-width: 1280px) {
+  :root[data-content-width='compact'] .page-wrapper {
+    max-width: 1120px;
+    margin-inline: auto;
+    background: transparent;
+  }
 }
 @font-face {
   font-family: 'iranSans';
   src: url('/src/assets/fonts/IRANSansWeb.ttf') format('truetype');
   font-weight: 300;
   font-style: normal;
+  font-display: optional;
 }
 @font-face {
   font-family: 'kalamehLight';
-  src: url('/src/assets/fonts/kalamehRegular.woff') format('woff');
+  src: url('/src/assets/fonts/kalamehLight.woff2') format('woff2');
   font-weight: 300;
   font-style: normal;
+  font-display: optional;
 }
 @font-face {
   font-family: 'vazir';
-  src: url('/src/assets/fonts/Vazir-Medium-FD.woff') format('woff');
-  font-weight: 300;
+  src: url('/src/assets/fonts/Vazir-Medium-FD.woff2') format('woff2');
+  font-weight: 400 600;
   font-style: normal;
+  font-display: swap;
+}
+
+// Formal local alternatives for the Customizer. They are not preloaded:
+// the browser requests one only after that family is selected by the user.
+@font-face {
+  font-family: 'vazirmatn';
+  src: url('/src/assets/fonts/Vazirmatn-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: optional;
+}
+@font-face {
+  font-family: 'sahel';
+  src: url('/src/assets/fonts/Sahel-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: optional;
+}
+@font-face {
+  font-family: 'samim';
+  src: url('/src/assets/fonts/Samim-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: optional;
 }
 @font-face {
   font-family: 'IranNastaliq';

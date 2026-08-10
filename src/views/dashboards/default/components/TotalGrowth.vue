@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue';
 import vuetify from '@/plugins/vuetify';
-import { useCustomizerStore } from '@/stores/customizer';
+import { useCustomizerStore } from '@amirjalili1374/ui-kit';
 import { api } from '@/services/api';
 
 const customizerStore = ref(useCustomizerStore());
