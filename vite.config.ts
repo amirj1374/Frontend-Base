@@ -19,8 +19,24 @@ export default defineConfig(({ mode }) => {
       }),
       vuetify({
         autoImport: true
-      })
-    ],
+      }),
+      // Development-only echo endpoint for inspecting the UI Kit customizer
+      // payload before a consumer project connects its real backend API.
+      mode === 'dev' && {
+        name: 'dev-customizer-payload-preview',
+        configureServer(server) {
+          server.middlewares.use('/__dev/customizer-preview', (request, response, next) => {
+            if (request.method !== 'POST') return next();
+            let body = '';
+            request.on('data', (chunk) => { body += chunk; });
+            request.on('end', () => {
+              response.setHeader('Content-Type', 'application/json');
+              response.end(JSON.stringify({ received: body, developmentOnly: true }));
+            });
+          });
+        }
+      }
+    ].filter(Boolean),
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),

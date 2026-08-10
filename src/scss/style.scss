@@ -18,3 +18,10 @@
 
 @import 'vue3-perfect-scrollbar/style.css';
 @import '@amirjalili1374/ui-kit/dist/style.css';
+
+// Dashboard summary cards are a recognisable part of the shell. Make the
+// rounded surface visible there too; this is visual-only and scoped to that
+// one presentation mode.
+.surface-rounded .total-income.total-income > .v-card {
+  border-radius: 28px !important;
+}

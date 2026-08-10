@@ -7,8 +7,9 @@ import { registerApplicationPlugins, registerStatePlugin } from './plugins';
 import { runApplicationInitialization } from './initialization';
 import { useAccessStore } from '@/stores/access';
 import { useAuthStore } from '@/stores/auth';
-import { useCustomizerStore } from '@/stores/customizer';
+import { useCustomizerStore } from '@amirjalili1374/ui-kit';
 import { api } from '@/services/api';
+import { parseCustomizerPreferences } from '@amirjalili1374/ui-kit';
 
 export interface BootstrapDependencies {
   createVueApp: () => VueApp;
@@ -29,7 +30,14 @@ async function initializeAuthenticationMode(app: VueApp): Promise<Authentication
         break;
       case 'jwt': {
         const response = await api.user.getUserInfo();
-        if (response?.data) useAuthStore().setUser(response.data);
+        if (response?.data) {
+          useAuthStore().setUser(response.data);
+          // The API stores all visual preferences in one versioned JSON string.
+          // Absence of the field deliberately keeps local/default preferences intact.
+          if (response.data.customizer != null) {
+            useCustomizerStore().APPLY_PREFERENCES(parseCustomizerPreferences(response.data.customizer));
+          }
+        }
         break;
       }
       case 'initializer':

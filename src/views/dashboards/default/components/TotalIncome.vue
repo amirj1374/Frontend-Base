@@ -90,6 +90,7 @@ const branchName = computed(() => {
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08) !important;
 }
 
+
 @media (max-width: 960px) {
   .total-income {
     grid-template-columns: repeat(2, minmax(0, 1fr));

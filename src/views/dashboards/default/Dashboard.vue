@@ -57,7 +57,7 @@
 
 <script setup>
 import { useCustomerInfoStore } from '@/stores/customerInfo';
-import { useCustomizerStore } from '@/stores/customizer';
+import { useCustomizerStore } from '@amirjalili1374/ui-kit';
 import DataLabels from '@/views/dashboards/default/components/DataLabels.vue';
 import TotalGrowth from '@/views/dashboards/default/components/TotalGrowth.vue';
 import TotalIncome from '@/views/dashboards/default/components/TotalIncome.vue';

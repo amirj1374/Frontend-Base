@@ -4,7 +4,7 @@ import { computed } from 'vue';
 import VerticalSidebarVue from './vertical-sidebar/VerticalSidebar.vue';
 import VerticalHeaderVue from './vertical-header/VerticalHeader.vue';
 import Customizer from './customizer/CustomizerPanel.vue';
-import { useCustomizerStore } from '@/stores/customizer';
+import { useCustomizerStore } from '@amirjalili1374/ui-kit';
 import { Loading } from '@amirjalili1374/ui-kit';
 
 const customizer = useCustomizerStore();
@@ -20,7 +20,7 @@ const showSidebar = computed(() => {
   <v-locale-provider :rtl="true">
     <v-app
       :theme="customizer.actTheme"
-      :class="[customizer.fontTheme, customizer.mini_sidebar ? 'mini-sidebar' : '', customizer.inputBg ? 'inputWithbg' : '']"
+      :class="[customizer.fontTheme, `surface-${customizer.surfaceStyle}`, customizer.mini_sidebar ? 'mini-sidebar' : '', customizer.inputBg ? 'inputWithbg' : '']"
     >
       <Customizer />
       <!-- Show sidebar when menu orientation is vertical -->
@@ -55,6 +55,10 @@ const showSidebar = computed(() => {
 }
 
 .v-main {
-  padding-top: 80px !important;
+  /* v-main owns the RTL page scrollbar. Keep its scroll rail below the fixed
+     80px header instead of allowing it to run behind the app bar. */
+  height: calc(100vh - 80px);
+  margin-top: 80px;
+  padding-top: 0 !important;
 }
 </style>

@@ -1,6 +1,7 @@
 import { type AxiosInstance } from "axios";
 import type { CustomizerDTO, PersonDTO } from '@/types/models/person';
 import type { UserInfoResponse } from '@/types/models/userInfo';
+import runtimeConfig from '@/config/runtime';
 
 const userApi = (axiosInstance: AxiosInstance) => ({
   getUserInfo(): Promise<{ data: UserInfoResponse }> {
@@ -19,7 +20,10 @@ const userApi = (axiosInstance: AxiosInstance) => ({
     return axiosInstance.delete(`api/v1/personTransaction-requests/${id}`);
   },
   setCustomizer(data: CustomizerDTO) {
-    return axiosInstance.post(`api/v1/customizer`, data);
+    // The payload comes from UI Kit; the endpoint stays configurable per consumer project.
+    return axiosInstance.post(runtimeConfig.customizerEndpoint, data, {
+      headers: { 'Content-Type': 'application/json' }
+    });
   },
 });
 

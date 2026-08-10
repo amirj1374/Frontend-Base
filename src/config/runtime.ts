@@ -13,6 +13,8 @@ export interface RuntimeEnvironment {
   readonly VITE_AUTH_FALLBACK_AUTHORIZATION_URL?: string;
   readonly VITE_DEBUG?: string;
   readonly VITE_DEV_PERMISSION_BYPASS?: string;
+  /** Consumer-owned path used to persist the UI Kit customizer string. */
+  readonly VITE_CUSTOMIZER_ENDPOINT?: string;
   readonly VITE_APP_TITLE?: string;
   readonly VITE_APP_ENV?: string;
   readonly DEV?: boolean;
@@ -36,6 +38,8 @@ export interface RuntimeConfig {
   readonly debug: boolean;
   /** Development-only visual permission bypass; never enabled outside dev. */
   readonly devPermissionBypass: boolean;
+  /** Consumer-owned API endpoint; UI Kit never contains this value. */
+  readonly customizerEndpoint: string;
   readonly appTitle: string;
   readonly appEnv: string;
 }
@@ -125,6 +129,7 @@ export const createRuntimeConfig = (env: RuntimeEnvironment): RuntimeConfig => {
     }),
     debug: read(env.VITE_DEBUG)?.toLowerCase() === 'true',
     devPermissionBypass,
+    customizerEndpoint: read(env.VITE_CUSTOMIZER_ENDPOINT) ?? 'api/v1/customizer',
     appTitle: read(env.VITE_APP_TITLE) ?? 'Vosool Frontend',
     appEnv
   });

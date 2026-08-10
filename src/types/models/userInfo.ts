@@ -1,4 +1,3 @@
-import type { CustomizerDTO } from '@/types/models/person';
 
 export interface UserInfoResponse {
   name: string;
@@ -25,5 +24,7 @@ export interface UserInfoResponse {
   email: string | null;
   roles: string[];
   lotusRoles: string[];
-  customizer: CustomizerDTO
-} 
+  // API returns the versioned JSON string. `unknown` also permits the old object
+  // shape during a no-downtime backend migration.
+  customizer?: unknown
+}

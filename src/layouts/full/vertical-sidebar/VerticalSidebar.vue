@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useDisplay } from 'vuetify';
-import { useCustomizerStore } from '@/stores/customizer';
+import { useCustomizerStore } from '@amirjalili1374/ui-kit';
 import { useCustomerInfoStore } from '@/stores/customerInfo';
 import sidebarItems, { getFilteredSidebarItems, type menu } from './sidebarItem';
 
@@ -85,7 +85,9 @@ function hasActiveChild(children: menu[]): boolean {
 <style>
 .rightSidebar .v-navigation-drawer__content { display: flex; flex-direction: column; overflow: hidden; }
 .sidebar-logo { flex: 0 0 auto; text-align: right; }
-.sidebar-menu-scroll { flex: 1 1 auto; min-height: 0; }
+.sidebar-menu-scroll { flex: 1 1 auto; min-height: 0; overflow-x: hidden !important; }
+.sidebar-menu-scroll .ps__rail-x { display: none !important; }
+.sidebar-menu-scroll .v-list { max-width: 100%; min-width: 0; overflow-x: hidden; }
 .sidebar-footer { flex: 0 0 auto; }
 /* Completely hide text when sidebar is closed */
 .rightSidebar.sidebar-closed .v-list-item-title,
