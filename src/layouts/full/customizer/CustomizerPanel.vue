@@ -14,11 +14,10 @@ const customizer = useCustomizerStore();
 const { t } = useI18n();
 
 function suggestLanguageChange(language: AppLanguage) {
-  // Direction and language are independent. A direction change may only offer
-  // the matching language when they currently differ; it never changes it.
-  const shouldSuggestEnglish = customizer.direction === 'ltr' && customizer.language === 'fa' && language === 'en';
-  const shouldSuggestPersian = customizer.direction === 'rtl' && customizer.language === 'en' && language === 'fa';
-  languageSuggestion.value = shouldSuggestEnglish || shouldSuggestPersian ? language : null;
+  // The UI Kit is the single source of truth for whether a direction change
+  // merits a suggestion. The consuming app only renders that suggestion and
+  // owns the actual language change.
+  languageSuggestion.value = language;
 }
 
 function setLanguage(language: AppLanguage) {

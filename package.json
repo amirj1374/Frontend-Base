@@ -39,7 +39,7 @@
     "clean": "rimraf dist node_modules/.vite"
   },
   "dependencies": {
-    "@amirjalili1374/ui-kit": "1.10.12",
+    "@amirjalili1374/ui-kit": "1.10.13",
     "@dsb-norge/vue-keycloak-js": "^3.0.3",
     "@mdi/js": "^7.4.47",
     "@tabler/icons-vue": "^3.33.0",
