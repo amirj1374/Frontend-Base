@@ -1,4 +1,4 @@
-import { createApp } from 'vue';
+import { createApp, type Plugin } from 'vue';
 import { createPinia } from 'pinia';
 import vuetify from '@/plugins/vuetify';
 import { normalizeAppError } from '@/errors/appError';
@@ -12,7 +12,9 @@ export async function mountFatalError(error: unknown): Promise<void> {
   try {
     const { default: Error401Page } = await import('@/views/pages/maintenance/error/Error401Page.vue');
     const errorApp = createApp(Error401Page as never, { error: normalized.message });
-    errorApp.use(createPinia());
+    // See registerStatePlugin: local linked packages can duplicate Vue's
+    // structural Plugin type even though Pinia remains a valid runtime plugin.
+    errorApp.use(createPinia() as unknown as Plugin);
     errorApp.use(vuetify);
     errorApp.mount('#app');
   } catch {

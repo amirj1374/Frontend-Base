@@ -1,4 +1,4 @@
-import { defineConfig, loadEnv } from 'vite';
+import { defineConfig, loadEnv, type ViteDevServer } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import vuetify from 'vite-plugin-vuetify';
 import path from 'path';
@@ -24,11 +24,11 @@ export default defineConfig(({ mode }) => {
       // payload before a consumer project connects its real backend API.
       mode === 'dev' && {
         name: 'dev-customizer-payload-preview',
-        configureServer(server) {
+        configureServer(server: ViteDevServer) {
           server.middlewares.use('/__dev/customizer-preview', (request, response, next) => {
             if (request.method !== 'POST') return next();
             let body = '';
-            request.on('data', (chunk) => { body += chunk; });
+            request.on('data', (chunk: string | Buffer) => { body += chunk; });
             request.on('end', () => {
               response.setHeader('Content-Type', 'application/json');
               response.end(JSON.stringify({ received: body, developmentOnly: true }));
@@ -38,6 +38,9 @@ export default defineConfig(({ mode }) => {
       }
     ].filter(Boolean),
     resolve: {
+      // A locally linked UI Kit must share these runtime singletons with the
+      // consumer; otherwise Pinia sees a different active instance at startup.
+      dedupe: ['vue', 'pinia', 'vuetify'],
       alias: {
         '@': path.resolve(__dirname, './src'),
         // SheetJS (xlsx) references these Node builtins but never uses them in the
@@ -54,15 +57,9 @@ export default defineConfig(({ mode }) => {
       // produced bundles (output is byte-identical) and noticeably speeds up the build.
       reportCompressedSize: false,
       rollupOptions: {
-        // Silence three known-benign Rolldown advisories (all other checks stay on, so
-        // genuine issues such as circular deps still surface):
-        //  - eval: lottie-web (a transitive dep of vue3-lottie) uses direct eval in its
-        //    expression engine. It is third-party code we cannot patch; it built and ran
-        //    fine under Vite 5/Rollup too.
-        //  - largeBarrelModules: @amirjalili1374/ui-kit imports the @tabler/icons-vue
-        //    barrel; the output is already tree-shaken to size parity (see treeshake below),
-        //    so this is only a build-speed hint about a dependency we do not control.
-        //  - pluginTimings: an informational timing breakdown, not a correctness signal.
+        // Silence known third-party Rolldown advisories while preserving all
+        // correctness checks. This avoids editor/build noise from lottie-web
+        // and the linked UI Kit without changing generated output.
         checks: {
           eval: false,
           largeBarrelModules: false,
@@ -99,7 +96,7 @@ export default defineConfig(({ mode }) => {
       }
     },
     optimizeDeps: {
-      exclude: ['vuetify'],
+      exclude: ['vuetify', '@amirjalili1374/ui-kit'],
       entries: ['./src/**/*.vue']
     },
     server: {

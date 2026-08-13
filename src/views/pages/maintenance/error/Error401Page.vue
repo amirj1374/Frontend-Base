@@ -1,5 +1,5 @@
 <template>
-  <v-locale-provider :rtl="true">
+  <v-locale-provider :rtl="customizer.direction === 'rtl'">
     <v-app>
       <v-row no-gutters class="h-screen">
         <v-col class="d-flex align-center justify-center">
@@ -12,9 +12,9 @@
             <IconAlertCircle size="120" color="#f44336"/>
           </div>
         </div>
-        <h1 class="text-h1 mb-4">401 - خطا در احراز هویت</h1>
+        <h1 class="text-h1 mb-4">{{ t('errors.auth') }}</h1>
         <p class="text-h6 mb-4 text-medium-emphasis">
-          سرویس احراز هویت در دسترس نیست
+          {{ t('errors.authUnavailable') }}
         </p>
         <p class="text-body-2 mb-6 text-medium-emphasis">
           لطفاً صفحه را مجدداً بارگذاری کنید یا با مدیر سیستم تماس بگیرید
@@ -27,7 +27,7 @@
           prepend-icon="$refresh"
           class="me-2"
         > 
-          تلاش مجدد
+          {{ t('errors.retry') }}
         </v-btn>
         <v-btn 
           variant="outlined" 
@@ -36,7 +36,7 @@
           @click="handleGoHome" 
           prepend-icon="$home"
         > 
-          بازگشت به صفحه اصلی
+          {{ t('errors.backHome') }}
         </v-btn>
         <div class="mt-6">
           <v-alert 
@@ -60,6 +60,11 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { IconAlertCircle } from '@tabler/icons-vue';
+import { useI18n } from 'vue-i18n';
+import { useCustomizerStore } from '@amirjalili1374/ui-kit';
+
+const { t } = useI18n();
+const customizer = useCustomizerStore();
 
 interface Props {
   error?: string | Error | unknown;

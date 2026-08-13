@@ -10,7 +10,7 @@
         />
         <!-- Add a separate transition for the span -->
         <transition name="fade-slide">
-          <span v-if="customizer.loading">لطفا منتظر بمانید</span>
+          <span v-if="customizer.loading">{{ t('common.loading') }}</span>
         </transition>
       </div>
     </div>
@@ -20,8 +20,10 @@
 <script setup lang="ts">
 import { Vue3Lottie } from 'vue3-lottie';
 import { useCustomizerStore } from '@amirjalili1374/ui-kit';
+import { useI18n } from 'vue-i18n';
 
 const customizer = useCustomizerStore();
+const { t } = useI18n();
 </script>
 
 <style scoped>

@@ -58,7 +58,7 @@ function hasActiveChild(children: menu[]): boolean {
 
 <template>
   <v-navigation-drawer
-    right
+    :location="customizer.direction === 'rtl' ? 'right' : 'left'"
     :model-value="customizer.Sidebar_drawer"
     @update:model-value="customizer.SET_SIDEBAR_DRAWER"
     elevation="0" rail-width="78" mobile-breakpoint="lg" app
@@ -84,7 +84,15 @@ function hasActiveChild(children: menu[]): boolean {
 </template>
 <style>
 .rightSidebar .v-navigation-drawer__content { display: flex; flex-direction: column; overflow: hidden; }
-.sidebar-logo { flex: 0 0 auto; text-align: right; }
+.sidebar-logo { flex: 0 0 auto; text-align: end; overflow: hidden; }
+.sidebar-logo .logo, .sidebar-logo .logo > a { display: block; width: 133px; }
+[dir='ltr'] .sidebar-logo { text-align: start; }
+/* The supplied wordmark puts the symbol at its visual end. In rail mode crop
+   toward that symbol, so the compact drawer never exposes only the text. */
+.rightSidebar.v-navigation-drawer--rail .sidebar-logo { padding-inline: 19px !important; }
+.rightSidebar.v-navigation-drawer--rail .sidebar-logo .logo { width: 40px; overflow: hidden; }
+.rightSidebar.v-navigation-drawer--rail .sidebar-logo .logo > a { width: 133px; display: block; }
+[dir='ltr'] .rightSidebar.v-navigation-drawer--rail .sidebar-logo .logo > a { transform: translateX(-93px); }
 .sidebar-menu-scroll { flex: 1 1 auto; min-height: 0; overflow-x: hidden !important; }
 .sidebar-menu-scroll .ps__rail-x { display: none !important; }
 .sidebar-menu-scroll .v-list { max-width: 100%; min-width: 0; overflow-x: hidden; }
@@ -133,6 +141,11 @@ function hasActiveChild(children: menu[]): boolean {
   margin: 0 !important;
   /* Vuetify anchors the zero-width prepend slot to the RTL edge in rail mode. */
   transform: translateX(-23px) !important;
+}
+
+[dir='ltr'] .rightSidebar.v-navigation-drawer--rail .v-list-item__prepend > .v-icon,
+[dir='ltr'] .rightSidebar.v-navigation-drawer--rail .v-list-item__prepend > svg {
+  transform: translateX(23px) !important;
 }
 
 .rightSidebar.v-navigation-drawer--rail .v-list-item__content {

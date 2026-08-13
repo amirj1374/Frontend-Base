@@ -1,4 +1,4 @@
-import type { App } from 'vue';
+import type { App, Plugin } from 'vue';
 import type { Pinia } from 'pinia';
 import BaseApexChart from '@/components/common/BaseApexChart.vue';
 import DigitLimit from '@/directives/v-digit-limit';
@@ -9,12 +9,16 @@ import { router } from '@/router';
 import { PerfectScrollbarPlugin } from 'vue3-perfect-scrollbar';
 import Vue3PersianDatetimePicker from 'vue3-persian-datetime-picker';
 import print from 'vue3-print-nb';
+import { i18n } from '@/i18n';
 
 export function registerStatePlugin(app: App, pinia: Pinia): void {
-  app.use(pinia);
+  // Pinia is a Vue plugin at runtime. The cast keeps local `npm link` builds
+  // type-safe when the linked UI Kit resolves Vue's plugin type separately.
+  app.use(pinia as unknown as Plugin);
 }
 
 export function registerApplicationPlugins(app: App): void {
+  app.use(i18n);
   app.use(router);
   app.use(PerfectScrollbarPlugin);
   app.use(print);

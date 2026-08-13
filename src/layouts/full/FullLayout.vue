@@ -17,7 +17,7 @@ const showSidebar = computed(() => {
 </script>
 
 <template>
-  <v-locale-provider :rtl="true">
+  <v-locale-provider :rtl="customizer.direction === 'rtl'">
     <v-app
       :theme="customizer.actTheme"
       :class="[customizer.fontTheme, `surface-${customizer.surfaceStyle}`, customizer.mini_sidebar ? 'mini-sidebar' : '', customizer.inputBg ? 'inputWithbg' : '']"

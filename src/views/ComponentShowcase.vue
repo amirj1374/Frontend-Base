@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import {
   AppConfirmAction,
   AppEmptyState,
@@ -16,6 +17,7 @@ import {
 const showFilters = ref(true);
 const showConfirmation = ref(false);
 const showNotifications = ref(false);
+const { t } = useI18n();
 const files = ref<PreviewFile[]>([
   { id: 1, name: 'راهنمای استفاده.pdf', type: 'PDF', size: '1.2 MB' },
   { id: 2, name: 'تصویر نمونه.png', type: 'PNG', size: '420 KB' }
@@ -28,46 +30,46 @@ const notifications = ref<AppNotification[]>([
 
 <template>
   <main class="showcase">
-    <AppPageHeader title="نمونهٔ کامپوننت‌های UI Kit" subtitle="همهٔ اجزا با رنگ، فونت، radius و حالت روشن/تاریک فعلی هماهنگ هستند.">
+    <AppPageHeader :title="t('showcase.title')" :subtitle="t('showcase.subtitle')">
       <template #actions>
         <AppNotificationCenter v-model="showNotifications" :notifications="notifications" @read-all="notifications = notifications.map(item => ({ ...item, read: true }))" />
-        <v-btn color="primary" @click="showConfirmation = true">عملیات نمونه</v-btn>
+        <v-btn color="primary" @click="showConfirmation = true">{{ t('showcase.action') }}</v-btn>
       </template>
     </AppPageHeader>
 
-    <AppFilterBar v-model="showFilters" title="فیلتر و جستجو" @reset="undefined" @submit="undefined">
-      <v-text-field label="عبارت جستجو" hide-details />
-      <v-select label="وضعیت" :items="['همه', 'فعال', 'غیرفعال']" hide-details />
-      <v-text-field label="تاریخ ثبت" hide-details readonly prepend-inner-icon="$calendar" />
+    <AppFilterBar v-model="showFilters" :title="t('showcase.filters')" @reset="undefined" @submit="undefined">
+      <v-text-field :label="t('showcase.search')" hide-details />
+      <v-select :label="t('showcase.status')" :items="[t('showcase.all'), t('showcase.active'), t('showcase.inactive')]" hide-details />
+      <v-text-field :label="t('showcase.date')" hide-details readonly prepend-inner-icon="$calendar" />
     </AppFilterBar>
 
     <section class="showcase__grid">
-      <AppFormSection title="اطلاعات نمونه" description="چینش فرم به‌صورت واکنش‌گرا از دو ستون به یک ستون تبدیل می‌شود.">
-        <v-text-field label="نام و نام خانوادگی" hide-details />
-        <v-text-field label="شماره تماس" hide-details />
-        <v-text-field label="پست الکترونیک" hide-details />
-        <v-select label="دسته‌بندی" :items="['گزینهٔ اول', 'گزینهٔ دوم']" hide-details />
+      <AppFormSection :title="t('showcase.sampleInfo')" :description="t('showcase.formDescription')">
+        <v-text-field :label="t('showcase.fullName')" hide-details />
+        <v-text-field :label="t('showcase.phone')" hide-details />
+        <v-text-field :label="t('showcase.email')" hide-details />
+        <v-select :label="t('showcase.category')" :items="[t('showcase.optionOne'), t('showcase.optionTwo')]" hide-details />
       </AppFormSection>
 
       <v-card class="showcase__card">
-        <v-card-title>وضعیت‌ها</v-card-title>
+        <v-card-title>{{ t('showcase.states') }}</v-card-title>
         <v-card-text class="d-flex flex-wrap ga-3">
-          <AppStatusBadge label="در حال بررسی" color="warning" />
-          <AppStatusBadge label="تأیید شده" color="success" icon="$success" />
-          <AppStatusBadge label="نیازمند اقدام" color="error" />
-          <AppStatusBadge label="پیش‌نویس" color="secondary" />
+          <AppStatusBadge :label="t('showcase.reviewing')" color="warning" />
+          <AppStatusBadge :label="t('showcase.approved')" color="success" icon="$success" />
+          <AppStatusBadge :label="t('showcase.needsAction')" color="error" />
+          <AppStatusBadge :label="t('showcase.draft')" color="secondary" />
         </v-card-text>
       </v-card>
 
       <v-card class="showcase__card">
-        <v-card-title>فایل‌های انتخاب‌شده</v-card-title>
+        <v-card-title>{{ t('showcase.files') }}</v-card-title>
         <v-card-text><AppFilePreview :files="files" removable downloadable @remove="file => files = files.filter(item => item.id !== file.id)" @download="undefined" /></v-card-text>
       </v-card>
 
-      <v-card class="showcase__card"><AppEmptyState title="داده‌ای برای نمایش وجود ندارد" description="برای شروع، یک مورد جدید ایجاد کنید." action-text="ایجاد مورد" @action="showConfirmation = true" /></v-card>
+      <v-card class="showcase__card"><AppEmptyState :title="t('showcase.emptyTitle')" :description="t('showcase.emptyDescription')" :action-text="t('showcase.create')" @action="showConfirmation = true" /></v-card>
     </section>
 
-    <AppConfirmAction v-model="showConfirmation" title="انجام عملیات نمونه؟" description="این دیالوگ تنها رفتار و ظاهر تأیید عملیات را نمایش می‌دهد." confirm-text="تأیید" @confirm="showConfirmation = false" />
+    <AppConfirmAction v-model="showConfirmation" :title="t('showcase.confirmTitle')" :description="t('showcase.confirmDescription')" :confirm-text="t('showcase.confirm')" @confirm="showConfirmation = false" />
   </main>
 </template>
 

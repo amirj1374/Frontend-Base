@@ -10,9 +10,9 @@
             <IconShieldCancel size="120" color="#f44336"/>
           </div>
         </div>
-        <h1 class="text-h1 mb-4">403 - دسترسی غیرمجاز</h1>
+        <h1 class="text-h1 mb-4">{{ t('errors.forbidden') }}</h1>
         <p class="text-h6 mb-4 text-medium-emphasis">
-          شما مجوز دسترسی به این صفحه را ندارید
+          {{ t('errors.forbiddenDescription') }}
         </p>
         <p class="text-body-2 mb-6 text-medium-emphasis">
           لطفاً با مدیر سیستم تماس بگیرید یا به صفحه اصلی برگردید
@@ -24,7 +24,7 @@
           @click="$router.push('/')" 
           prepend-icon="$home"
         > 
-          بازگشت به صفحه اصلی
+          {{ t('errors.backHome') }}
         </v-btn>
       </div>
     </v-col>
@@ -33,6 +33,8 @@
 
 <script setup>
 import { IconShieldCancel } from '@tabler/icons-vue';
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 </script>
 
 <style lang="scss">
@@ -99,4 +101,4 @@ import { IconShieldCancel } from '@tabler/icons-vue';
 .text-medium-emphasis {
   opacity: 0.7;
 }
-</style> 
+</style>

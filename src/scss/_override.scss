@@ -1,6 +1,5 @@
 html {
   font-size: calc(16px * var(--app-text-scale, 1));
-  direction: rtl;
   --v-theme-primary: var(--app-scrollbar-primary, 126, 87, 194);
 
   /* In RTL the document scrollbar intentionally stays on the left, leaving
@@ -34,7 +33,7 @@ html {
 /* The actual page scroller can be html, body, or a Vuetify container depending
    on the page. Give every one the same RTL position and active theme thumb. */
 body {
-  direction: rtl;
+  direction: inherit;
 }
 
 .v-application,

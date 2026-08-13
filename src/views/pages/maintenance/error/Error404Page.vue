@@ -1,4 +1,7 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
+</script>
 
 <template>
   <v-row no-gutters class="h-screen">
@@ -10,11 +13,11 @@
           <img src="@/assets/images/maintenance/img-error-text.svg" alt="build" class="CardMediaBuild" />
           <img src="@/assets/images/maintenance/img-error-purple.svg" alt="build" class="CardMediaBuild" />
         </div>
-        <h1 class="text-h1">صفحه مورد نظر یافت نشد</h1>
+        <h1 class="text-h1">{{ t('errors.notFound') }}</h1>
         <p>
-          <small>به صفحه اصلی برگردید</small>
+          <small>{{ t('errors.backHome') }}</small>
         </p>
-        <v-btn variant="flat" color="primary" class="mt-4" to="/" prepend-icon="$home"> صفحه اصلی</v-btn>
+        <v-btn variant="flat" color="primary" class="mt-4" to="/" prepend-icon="$home">{{ t('errors.home') }}</v-btn>
       </div>
     </v-col>
   </v-row>
