@@ -13,6 +13,7 @@ import {
 } from '@tabler/icons-vue';
 import { useAccessStore } from '@/stores/access';
 import { requiredPermissionFor } from '@/config/pageAccess';
+import { i18n } from '@/i18n';
 
 export interface menu {
   header?: string;
@@ -28,12 +29,13 @@ export interface menu {
   disabled?: boolean;
   type?: string;
   subCaption?: string;
+  titleKey?: string;
   permissionKey?: string; // Add permission key for role-based access
 }
 
 const sidebarItem: menu[] = [
   {
-    title: 'داشبورد',
+    titleKey: 'navigation.dashboard',
     icon: IconHome,
     to: '/'
   },
@@ -45,6 +47,8 @@ const sidebarItem: menu[] = [
 // (or whose API the user holds) are kept; filtering is recursive and does not
 // mutate the source array.
 export function getFilteredSidebarItems(): menu[] {
+  // Establish a reactive dependency so labels refresh immediately on language change.
+  const locale = i18n.global.locale.value;
   const access = useAccessStore();
   access.ensureLoaded();
 
@@ -56,7 +60,11 @@ export function getFilteredSidebarItems(): menu[] {
   };
 
   const filter = (items: menu[]): menu[] =>
-    items.filter(isAllowed).map((item) => (item.children && item.children.length ? { ...item, children: filter(item.children) } : item));
+    items.filter(isAllowed).map((item) => ({
+      ...item,
+      title: item.titleKey ? i18n.global.t(item.titleKey) : item.title,
+      children: item.children?.length ? filter(item.children) : undefined
+    }));
 
   return filter(sidebarItem);
 }

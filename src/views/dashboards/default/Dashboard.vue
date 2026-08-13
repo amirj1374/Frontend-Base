@@ -5,14 +5,14 @@
       <v-row v-if="customizer.loading">
         <v-col cols="12" class="text-center">
           <v-progress-circular indeterminate color="primary" size="64"></v-progress-circular>
-          <p class="mt-4">در حال بارگذاری اطلاعات کاربر...</p>
+          <p class="mt-4">{{ t('dashboard.loadingUser') }}</p>
         </v-col>
       </v-row>
 
       <!-- Error State -->
       <v-row v-else-if="customerInfoStore.error">
         <v-col cols="12">
-          <v-alert type="error" title="خطا در بارگذاری اطلاعات" :text="customerInfoStore.error"></v-alert>
+          <v-alert type="error" :title="t('dashboard.loadError')" :text="customerInfoStore.error"></v-alert>
         </v-col>
       </v-row>
 
@@ -62,20 +62,22 @@ import DataLabels from '@/views/dashboards/default/components/DataLabels.vue';
 import TotalGrowth from '@/views/dashboards/default/components/TotalGrowth.vue';
 import TotalIncome from '@/views/dashboards/default/components/TotalIncome.vue';
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const customerInfoStore = useCustomerInfoStore();
 const customizer = useCustomizerStore();
+const { t } = useI18n();
 
 // Get user info from store
 const userInfo = computed(() => customerInfoStore.getUserInfo);
 
 // Format date helper function
 const formatDate = (dateString) => {
-  if (!dateString) return 'نامشخص';
+  if (!dateString) return t('common.unknown');
 
   try {
     const date = new Date(dateString);
-    return date.toLocaleDateString('fa-IR', {
+    return date.toLocaleDateString(customizer.language === 'en' ? 'en-US' : 'fa-IR', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',

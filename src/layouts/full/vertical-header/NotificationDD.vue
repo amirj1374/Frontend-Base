@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import { IconBuildingStore, IconSend, IconMailbox, IconPhoto } from '@tabler/icons-vue';
+import { computed, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
-const notificationDD = ref(['همه اعلان ها', 'جدید', 'خوانده نشده', 'دیگر']);
-const selectNotify = ref<string>('همه اعلان ها');
+const { t } = useI18n();
+const notificationDD = computed(() => [t('notifications.all'), t('notifications.new'), t('notifications.unread'), t('notifications.other')]);
+const selectNotify = ref<string>('');
 </script>
 
 <template>
@@ -13,10 +15,10 @@ const selectNotify = ref<string>('همه اعلان ها');
   <div class="pa-4">
     <div class="d-flex align-center justify-space-between mb-3">
       <h6 class="text-subtitle-1">
-        همه اعلان ها
+        {{ t('notifications.all') }}
         <v-chip color="warning" variant="flat" size="small" class="ml-2 text-white">01</v-chip>
       </h6>
-      <a href="#" class="text-decoration-underline text-primary text-subtitle-2">علامت گذاری به عنوان همه خوانده شده
+      <a href="#" class="text-decoration-underline text-primary text-subtitle-2">{{ t('notifications.markAllRead') }}
       </a>
     </div>
     <v-select :items="notificationDD" v-model="selectNotify" color="primary" variant="outlined" density="default" hide-details></v-select>
@@ -31,14 +33,14 @@ const selectNotify = ref<string>('همه اعلان ها');
           </v-avatar>
         </template>
         <div class="d-inline-flex align-center justify-space-between w-100">
-          <h6 class="text-subtitle-1 font-weight-regular">اطلاعیه سیستم</h6>
-          <span class="text-subtitle-2 text-medium-emphasis">2 mins ago</span>
+          <h6 class="text-subtitle-1 font-weight-regular">{{ t('notifications.system') }}</h6>
+          <span class="text-subtitle-2 text-medium-emphasis">{{ t('notifications.minutesAgo', { count: 2 }) }}</span>
         </div>
 
-        <p class="text-subtitle-2 text-medium-emphasis mt-1">زیر ساخت پروژه فرانت (در این قسمت میتوانید اعلان ها را مشاهده کنید)</p>
+        <p class="text-subtitle-2 text-medium-emphasis mt-1">{{ t('notifications.description') }}</p>
         <div class="mt-3">
 <!--          <v-chip size="small" text="خوانده نشده" color="error" variant="tonal" class="ml-2" />-->
-          <v-chip size="small" text="جدید" color="warning" variant="tonal" />
+          <v-chip size="small" :text="t('notifications.new')" color="warning" variant="tonal" />
         </div>
       </v-list-item>
 <!--      <v-divider></v-divider>-->
@@ -120,6 +122,6 @@ const selectNotify = ref<string>('همه اعلان ها');
   </perfect-scrollbar>
   <v-divider></v-divider>
   <div class="pa-2 text-center">
-    <v-btn color="primary" variant="text">نمایش همه</v-btn>
+    <v-btn color="primary" variant="text">{{ t('notifications.viewAll') }}</v-btn>
   </div>
 </template>

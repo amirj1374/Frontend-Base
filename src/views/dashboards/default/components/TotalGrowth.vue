@@ -3,15 +3,14 @@ import { ref, computed, watch, onMounted } from 'vue';
 import vuetify from '@/plugins/vuetify';
 import { useCustomizerStore } from '@amirjalili1374/ui-kit';
 import { api } from '@/services/api';
+import { useI18n } from 'vue-i18n';
 
 const customizerStore = ref(useCustomizerStore());
+const { t, locale } = useI18n();
 const currentTheme = ref(vuetify.theme.themes.value[customizerStore.value.getActTheme]);
-const requestTypeLabels: Record<string, string> = {
-  LetterOfCredit: 'اعتبار اسنادی',
-  ContractCode: 'تسهیلات',
-  GuaranteeTypeRial: 'ضمانت نامه ریالی',
-  GuaranteeType: 'ضمانت نامه ارزی'
-};
+const requestTypeLabels = computed<Record<string, string>>(() => locale.value === 'fa'
+  ? { LetterOfCredit: 'اعتبار اسنادی', ContractCode: 'تسهیلات', GuaranteeTypeRial: 'ضمانت‌نامه ریالی', GuaranteeType: 'ضمانت‌نامه ارزی' }
+  : { LetterOfCredit: 'Letter of credit', ContractCode: 'Facilities', GuaranteeTypeRial: 'Rial guarantee', GuaranteeType: 'Foreign-currency guarantee' });
 const groupName = ref<string[]>([]);
 const seriesData = ref<Array<{ name: string; data: number[] }>>([]);
 const isLoading = ref<boolean>(true);
@@ -29,33 +28,19 @@ type ConsignmentInfoDTO = {
   series: ConsignmentSeriesDTO[];
 };
 
-const select = ref({ state: 'روزانه', abbr: 'ONE_DAY' });
+const select = ref({ state: '', abbr: 'ONE_DAY' });
 
-const items = [
-  { state: 'روزانه', abbr: 'ONE_DAY' },
-  { state: 'ماه گذشته', abbr: 'ONE_MONTH' },
-  { state: 'دو ماه گذشته', abbr: 'TWO_MONTH' },
-  { state: 'سه ماه گذشته', abbr: 'THREE_MONTH' }
-];
+const items = computed(() => [
+  { state: t('dashboard.daily'), abbr: 'ONE_DAY' }, { state: t('dashboard.previousMonth'), abbr: 'ONE_MONTH' },
+  { state: t('dashboard.previousTwoMonths'), abbr: 'TWO_MONTH' }, { state: t('dashboard.previousThreeMonths'), abbr: 'THREE_MONTH' }
+]);
 
-const seriesLabels: Record<string, string> = {
-  '1': 'دریافت درخواست',
-  '2': 'تخصیص شناسه پستی',
-  '3': 'مراجعه موفق',
-  '4': 'مراجعه ناموفق',
-  '200': 'ثبت شده',
-  '201': 'سریال نامعتبر',
-  '202': 'سریال تکراری',
-  '204': 'مقصد نامعتبر',
-  '205': 'آدرس گیرنده نامعتبر',
-  '206': 'کد رهگیری تکراری',
-  '207': 'گیرنده نامعتبر',
-  '208': 'متعهد نامشخص',
-  '209': 'خطای نامشخص',
-  Ready: 'آماده ارسال',
-  NonAuthoritativeInformation: 'کد کاربری نامعتبر',
-  NotAcceptable: 'دیتای نامعتبر'
-};
+const seriesLabels = computed<Record<string, string>>(() => ({
+  '1': t('dashboard.requestReceived'), '2': t('dashboard.postalAssigned'), '3': t('dashboard.successfulVisit'), '4': t('dashboard.unsuccessfulVisit'),
+  '200': t('dashboard.registered'), '201': t('dashboard.invalidSerial'), '202': t('dashboard.duplicateSerial'), '204': t('dashboard.invalidDestination'),
+  '205': t('dashboard.invalidRecipientAddress'), '206': t('dashboard.duplicateTracking'), '207': t('dashboard.invalidRecipient'), '208': t('dashboard.unknownCommitment'),
+  '209': t('dashboard.unknownError'), Ready: t('dashboard.readyToSend'), NonAuthoritativeInformation: t('dashboard.invalidUserCode'), NotAcceptable: t('dashboard.invalidData')
+}));
 
 watch(
   () => customizerStore.value.getActTheme,
@@ -76,32 +61,32 @@ const fetchConsignmentInfo = async () => {
       const data = res.data as ConsignmentInfoDTO;
 
       groupName.value = data.requestType.map((item) => {
-        return requestTypeLabels[item] ?? item;
+        return requestTypeLabels.value[item] ?? item;
       });
 
       const categoriesCount = groupName.value.length || 1;
 
-      seriesData.value = Object.keys(seriesLabels).map((key) => {
+      seriesData.value = Object.keys(seriesLabels.value).map((key) => {
         const apiSeries = data.series?.find((s) => s.name.toString() === key);
 
         return {
-          name: seriesLabels[key],
+          name: seriesLabels.value[key],
           data: apiSeries ? apiSeries.data.map((n) => Number(n) || 0) : Array(categoriesCount).fill(0)
         };
       });
 
       if (!seriesData.value.length) {
-        seriesData.value = [{ name: 'داده‌ای موجود نیست', data: [0] }];
+        seriesData.value = [{ name: t('dashboard.noData'), data: [0] }];
       }
     } else {
       groupName.value = ['—'];
-      seriesData.value = [{ name: 'داده‌ای موجود نیست', data: [0] }];
-      loadError.value = 'دریافت اطلاعات با مشکل مواجه شد.';
+      seriesData.value = [{ name: t('dashboard.noData'), data: [0] }];
+      loadError.value = t('dashboard.dataLoadIssue');
     }
   } catch (err) {
     groupName.value = ['—'];
-    seriesData.value = [{ name: 'داده‌ای موجود نیست', data: [0] }];
-    loadError.value = 'خطا در دریافت اطلاعات.';
+    seriesData.value = [{ name: t('dashboard.noData'), data: [0] }];
+    loadError.value = t('dashboard.dataLoadError');
   } finally {
     chartRenderKey.value++;
     isLoading.value = false;
@@ -120,6 +105,7 @@ watch(
     }
   }
 );
+watch(locale, () => { select.value = { state: items.value.find(item => item.abbr === select.value.abbr)?.state ?? '', abbr: select.value.abbr }; fetchConsignmentInfo(); });
 
 const chartOptions1 = computed(() => {
   return {
@@ -220,7 +206,7 @@ const lineChart1 = computed(() => ({
       <v-card-text>
         <v-row>
           <v-col cols="12" sm="9">
-            <h3 class="text-h3 mt-1">نمونه چارت</h3>
+            <h3 class="text-h3 mt-1">{{ t('dashboard.chart') }}</h3>
           </v-col>
           <v-col cols="12" sm="3">
             <v-select
@@ -231,7 +217,7 @@ const lineChart1 = computed(() => ({
               :items="items"
               item-title="state"
               item-value="abbr"
-              label="Select"
+              :label="t('dashboard.period')"
               persistent-hint
               return-object
               single-line

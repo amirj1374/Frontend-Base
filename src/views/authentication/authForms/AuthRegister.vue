@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import Google from '@/assets/images/auth/social-google.svg';
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 const checkbox = ref(false);
 const show1 = ref(false);
 const password = ref('');
@@ -8,11 +10,8 @@ const email = ref('');
 const Regform = ref();
 const firstname = ref('');
 const lastname = ref('');
-const passwordRules = ref([
-  (v: string) => !!v || 'Password is required',
-  (v: string) => (v && v.length <= 10) || 'Password must be less than 10 characters'
-]);
-const emailRules = ref([(v: string) => !!v || 'E-mail is required', (v: string) => /.+@.+\..+/.test(v) || 'E-mail must be valid']);
+const passwordRules = computed(() => [(v: string) => !!v || t('register.passwordRequired'), (v: string) => (v && v.length <= 10) || t('register.passwordLength')]);
+const emailRules = computed(() => [(v: string) => !!v || t('register.emailRequired'), (v: string) => /.+@.+\..+/.test(v) || t('register.emailInvalid')]);
 
 function validate() {
   Regform.value.validate();
@@ -22,16 +21,16 @@ function validate() {
 <template>
   <v-btn block color="primary" variant="outlined" class="text-lightText googleBtn">
     <img :src="Google" alt="google" />
-    <span class="ml-2">Sign up with Google</span></v-btn
+    <span class="ml-2">{{ t('register.google') }}</span></v-btn
   >
   <v-row>
     <v-col class="d-flex align-center">
       <v-divider class="custom-devider" />
-      <v-btn variant="outlined" class="orbtn" rounded="md" size="small">OR</v-btn>
+      <v-btn variant="outlined" class="orbtn" rounded="md" size="small">{{ t('register.or') }}</v-btn>
       <v-divider class="custom-devider" />
     </v-col>
   </v-row>
-  <h5 class="text-h5 text-center my-4 mb-8">Sign up with Email address</h5>
+  <h5 class="text-h5 text-center my-4 mb-8">{{ t('register.emailSignup') }}</h5>
   <v-form ref="Regform" lazy-validation action="/dashboards/analytical" class="mt-7 loginForm">
     <v-row>
       <v-col cols="12" sm="6">
@@ -41,7 +40,7 @@ function validate() {
           hide-details="auto"
           variant="outlined"
           color="primary"
-          label="Firstname"
+          :label="t('register.firstName')"
         ></v-text-field>
       </v-col>
       <v-col cols="12" sm="6">
@@ -51,14 +50,14 @@ function validate() {
           hide-details="auto"
           variant="outlined"
           color="primary"
-          label="Lastname"
+          :label="t('register.lastName')"
         ></v-text-field>
       </v-col>
     </v-row>
     <v-text-field
       v-model="email"
       :rules="emailRules"
-      label="Email Address / Username"
+      :label="t('register.email')"
       class="mt-4 mb-4"
       required
       density="comfortable"
@@ -69,7 +68,7 @@ function validate() {
     <v-text-field
       v-model="password"
       :rules="passwordRules"
-      label="Password"
+      :label="t('register.password')"
       required
       density="comfortable"
       variant="outlined"
@@ -85,19 +84,19 @@ function validate() {
       <v-checkbox
         v-model="checkbox"
         :rules="[(v: any) => !!v || 'You must agree to continue!']"
-        label="Agree with?"
+        :label="t('register.agree')"
         required
         color="primary"
         class="ms-n2"
         hide-details
       ></v-checkbox>
-      <a href="#" class="ml-1 text-lightText">Terms and Condition</a>
+      <a href="#" class="ml-1 text-lightText">{{ t('register.terms') }}</a>
     </div>
-    <v-btn color="secondary" block class="mt-2" variant="flat" size="large" @click="validate()">Sign Up</v-btn>
+    <v-btn color="secondary" block class="mt-2" variant="flat" size="large" @click="validate()">{{ t('register.submit') }}</v-btn>
   </v-form>
   <div class="mt-5 text-right">
     <v-divider />
-    <v-btn variant="plain" to="/auth/login" class="mt-2 text-capitalize ml-n2">Already have an account?</v-btn>
+    <v-btn variant="plain" to="/auth/login" class="mt-2 text-capitalize ml-n2">{{ t('register.existing') }}</v-btn>
   </div>
 </template>
 <style lang="scss">

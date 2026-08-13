@@ -14,9 +14,11 @@ const customizer = useCustomizerStore();
 const { t } = useI18n();
 
 function suggestLanguageChange(language: AppLanguage) {
-  // Direction and language remain independent. The user explicitly chooses
-  // whether LTR should also switch the application copy to English.
-  languageSuggestion.value = language;
+  // Direction and language are independent. A direction change may only offer
+  // the matching language when they currently differ; it never changes it.
+  const shouldSuggestEnglish = customizer.direction === 'ltr' && customizer.language === 'fa' && language === 'en';
+  const shouldSuggestPersian = customizer.direction === 'rtl' && customizer.language === 'en' && language === 'fa';
+  languageSuggestion.value = shouldSuggestEnglish || shouldSuggestPersian ? language : null;
 }
 
 function setLanguage(language: AppLanguage) {
@@ -30,11 +32,11 @@ async function saveCustomizer(payload: string) {
     const response = await api.user.setCustomizer(payload);
     const echoedPayload = response?.data?.received;
     snackbarMessage.value = echoedPayload
-      ? `رشتهٔ ارسال‌شده: ${echoedPayload}`
-      : 'تنظیمات با موفقیت ذخیره شد';
+      ? t('common.sentPayload', { payload: echoedPayload })
+      : t('common.saveSuccess');
     snackbarColor.value = 'success';
   } catch {
-    snackbarMessage.value = 'خطا در ذخیره تنظیمات';
+    snackbarMessage.value = t('common.saveError');
     snackbarColor.value = 'error';
   } finally {
     snackbar.value = true;

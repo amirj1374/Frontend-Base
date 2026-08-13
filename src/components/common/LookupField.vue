@@ -41,9 +41,9 @@
             >
               <template #inline-filter-actions="{ resetFilter, hasActiveFilters }">
                 <div class="d-flex ga-2">
-                  <v-btn color="primary" variant="flat" @click="applyFilter">جستجو</v-btn>
-                  <v-btn :disabled="pendingSelection.length === 0" color="success" variant="flat" @click="confirmSelection">انتخاب</v-btn>
-                  <v-btn v-if="hasActiveFilters" color="error" variant="text" @click="resetFilter">پاک کردن</v-btn>
+                  <v-btn color="primary" variant="flat" @click="applyFilter">{{ t('common.search') }}</v-btn>
+                  <v-btn :disabled="pendingSelection.length === 0" color="success" variant="flat" @click="confirmSelection">{{ t('common.select') }}</v-btn>
+                  <v-btn v-if="hasActiveFilters" color="error" variant="text" @click="resetFilter">{{ t('common.clear') }}</v-btn>
                 </div>
               </template>
             </CustomDataTable>
@@ -56,12 +56,14 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useDisplay } from 'vuetify';
 import { icons } from '@/plugins/mdi-icon';
 import { CustomDataTable } from '@amirjalili1374/ui-kit';
 import axiosInstance from '@/services/axiosInstance';
 
 const localAxiosInstance = axiosInstance;
+const { t } = useI18n();
 
 interface HeaderItem {
   key: string;

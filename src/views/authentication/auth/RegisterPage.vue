@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import Logo from '@/layouts/full/logo/LogoDark.vue';
 import AuthRegister from '../authForms/AuthRegister.vue';
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 </script>
 
 <template>
@@ -18,8 +20,8 @@ import AuthRegister from '../authForms/AuthRegister.vue';
                     <v-row>
                       <v-col cols="12" class="text-center">
                         <Logo />
-                        <h2 class="text-secondary text-h2 mt-8">Sign up</h2>
-                        <h4 class="text-disabled text-h4 mt-3">Enter credentials to continue</h4>
+                        <h2 class="text-secondary text-h2 mt-8">{{ t('register.title') }}</h2>
+                        <h4 class="text-disabled text-h4 mt-3">{{ t('register.subtitle') }}</h4>
                       </v-col>
                     </v-row>
                     <!---Left Part Logo -->

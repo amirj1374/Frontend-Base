@@ -4,10 +4,12 @@ import { IconBuildingStore, IconTableShare } from '@tabler/icons-vue';
 
 import { useAuthStore } from '@/stores/auth';
 import { useBaseStore } from '@/stores/base';
+import { useI18n } from 'vue-i18n';
 
 // 🟢 store
 const authStore = useAuthStore();
 const baseStore = useBaseStore();
+const { t } = useI18n();
 
 const displayName = computed(() => authStore.claims?.name ?? '—');
 const position = computed(() => authStore.claims?.position ?? '—');
@@ -35,7 +37,7 @@ const branchName = computed(() => {
               {{ position }}
               <!-- یا: {{ translatedRoles }} -->
             </h3>
-            <span class="text-subtitle-1 text-disabled font-weight-medium">نقش / سمت</span>
+            <span class="text-subtitle-1 text-disabled font-weight-medium">{{ t('dashboard.role') }}</span>
           </div>
         </div>
       </v-card-text>
@@ -53,7 +55,7 @@ const branchName = computed(() => {
             <h3 class="text-h3">
               {{ displayName }}
             </h3>
-            <span class="text-subtitle-1 text-medium-emphasis text-white">نام و نام خانوادگی</span>
+            <span class="text-subtitle-1 text-medium-emphasis text-white">{{ t('dashboard.fullName') }}</span>
           </div>
         </div>
       </v-card-text>
@@ -69,7 +71,7 @@ const branchName = computed(() => {
 
           <div>
             <h3 class="text-h3 font-weight-medium">{{ branchCode }} - {{ branchName }}</h3>
-            <span class="text-subtitle-1 text-disabled font-weight-medium">شعبه</span>
+            <span class="text-subtitle-1 text-disabled font-weight-medium">{{ t('dashboard.branch') }}</span>
           </div>
         </div>
       </v-card-text>

@@ -15,7 +15,7 @@
           {{ t('errors.forbiddenDescription') }}
         </p>
         <p class="text-body-2 mb-6 text-medium-emphasis">
-          لطفاً با مدیر سیستم تماس بگیرید یا به صفحه اصلی برگردید
+          {{ t('errors.forbiddenHelp') }}
         </p>
         <v-btn 
           variant="flat" 

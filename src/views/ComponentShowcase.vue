@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import {
   AppConfirmAction,
@@ -18,13 +18,11 @@ const showFilters = ref(true);
 const showConfirmation = ref(false);
 const showNotifications = ref(false);
 const { t } = useI18n();
-const files = ref<PreviewFile[]>([
-  { id: 1, name: 'راهنمای استفاده.pdf', type: 'PDF', size: '1.2 MB' },
-  { id: 2, name: 'تصویر نمونه.png', type: 'PNG', size: '420 KB' }
-]);
-const notifications = ref<AppNotification[]>([
-  { id: 1, title: 'تغییرات ذخیره شد', description: 'تنظیمات نمایشی با موفقیت ثبت شد.', time: 'اکنون', read: false },
-  { id: 2, title: 'نمونهٔ آماده', description: 'کامپوننت‌های عمومی برای بررسی آماده‌اند.', time: '۵ دقیقه قبل', read: true }
+const files = computed<PreviewFile[]>(() => [{ id: 1, name: t('showcase.guide'), type: 'PDF', size: '1.2 MB' }, { id: 2, name: t('showcase.sampleImage'), type: 'PNG', size: '420 KB' }]);
+const notifications = ref<AppNotification[]>([]);
+const localizedNotifications = computed<AppNotification[]>(() => notifications.value.length ? notifications.value : [
+  { id: 1, title: t('showcase.saved'), description: t('showcase.savedDescription'), time: t('showcase.now'), read: false },
+  { id: 2, title: t('showcase.ready'), description: t('showcase.readyDescription'), time: t('showcase.minutesAgo'), read: true }
 ]);
 </script>
 
@@ -32,7 +30,7 @@ const notifications = ref<AppNotification[]>([
   <main class="showcase">
     <AppPageHeader :title="t('showcase.title')" :subtitle="t('showcase.subtitle')">
       <template #actions>
-        <AppNotificationCenter v-model="showNotifications" :notifications="notifications" @read-all="notifications = notifications.map(item => ({ ...item, read: true }))" />
+        <AppNotificationCenter v-model="showNotifications" :notifications="localizedNotifications" @read-all="notifications = localizedNotifications.map(item => ({ ...item, read: true }))" />
         <v-btn color="primary" @click="showConfirmation = true">{{ t('showcase.action') }}</v-btn>
       </template>
     </AppPageHeader>

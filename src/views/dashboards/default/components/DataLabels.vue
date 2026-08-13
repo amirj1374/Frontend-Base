@@ -3,6 +3,7 @@ import { ref, computed, watch, onMounted } from 'vue';
 import vuetify from '@/plugins/vuetify';
 import { useCustomizerStore } from '@amirjalili1374/ui-kit';
 import { api } from '@/services/api';
+import { useI18n } from 'vue-i18n';
 
 type CallReportItemDTO = {
   numbers: number;
@@ -12,6 +13,7 @@ type CallReportItemDTO = {
 };
 
 const customizerStore = ref(useCustomizerStore());
+const { t } = useI18n();
 const currentTheme = ref(vuetify.theme.themes.value[customizerStore.value.getActTheme]);
 
 const labels = ref<string[]>([]);
@@ -42,7 +44,7 @@ const fetchChartData = async () => {
       numbers.value = data.map((item) => Number(item.numbers));
     }
   } catch (err: unknown) {
-    const message = (err as { message?: string })?.message || 'خطا در دریافت داده ها';
+    const message = (err as { message?: string })?.message || t('dashboard.dataLoadError');
     loadError.value = message;
     labels.value = [];
     percentages.value = [];
@@ -94,7 +96,7 @@ const chartOptions = computed(() => ({
         },
         total: {
           show: true,
-          label: 'کل سوابق مکاتبات پرونده',
+          label: t('dashboard.callRecords'),
           fontFamily: 'vazir, sans-serif',
           formatter: () => {
             const total = numbers.value.reduce((sum, item) => sum + item, 0);
@@ -117,7 +119,7 @@ const chartOptions = computed(() => ({
   <v-card elevation="0" class="h-100 d-flex flex-column">
     <v-card class="flex-grow-1">
       <v-card-text>
-        <h3 class="text-h3 mt-1">نمونه</h3>
+        <h3 class="text-h3 mt-1">{{ t('dashboard.chartSample') }}</h3>
         <div class="mt-4">
           <template v-if="isLoading">
             <div class="d-flex justify-center py-8">

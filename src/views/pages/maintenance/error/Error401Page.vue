@@ -17,7 +17,7 @@
           {{ t('errors.authUnavailable') }}
         </p>
         <p class="text-body-2 mb-6 text-medium-emphasis">
-          لطفاً صفحه را مجدداً بارگذاری کنید یا با مدیر سیستم تماس بگیرید
+          {{ t('errors.authHelp') }}
         </p>
         <v-btn 
           variant="flat" 
@@ -46,8 +46,8 @@
             max-width="600"
             style="margin: 0 auto;"
           >
-            <div class="text-caption font-weight-bold mb-1">جزئیات خطا:</div>
-            <div class="text-body-2">{{ errorMessage || 'خطای نامشخص در احراز هویت' }}</div>
+            <div class="text-caption font-weight-bold mb-1">{{ t('errors.details') }}</div>
+            <div class="text-body-2">{{ errorMessage || t('errors.unknownAuth') }}</div>
           </v-alert>
         </div>
       </div>

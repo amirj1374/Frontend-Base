@@ -1,42 +1,44 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { BaseBreadcrumb, CustomDataTable } from '@amirjalili1374/ui-kit';
 import Settings from '@/components/sections/settings/settings.vue';
 import axiosInstance from '@/services/axiosInstance';
 // Use dynamic imports for heavy components
 const localAxiosInstance = axiosInstance;
 
-const page = ref({ title: 'مدیریت سیستم' });
+const { t } = useI18n();
+const page = computed(() => ({ title: t('settings.title') }));
 const error = ref<string | null>(null);
 const showError = ref(false);
-const breadcrumbs = ref([
+const breadcrumbs = computed(() => [
   {
-    title: 'مدیریت سیستم',
+    title: t('settings.title'),
     disabled: false,
     href: '#'
   }
 ]);
 
-const headers = [
+const headers = computed(() => [
   {
-    title: 'نام',
+    title: t('settings.name'),
     key: 'name',
     sortable: true,
     width: 150
   },
   {
-    title: 'توضیحات',
+    title: t('settings.description'),
     key: 'description',
     sortable: true,
     width: 150
   },
   {
-    title: 'مقدار',
+    title: t('settings.value'),
     key: 'value',
     sortable: true,
     width: 300
   }
-];
+]);
 </script>
 
 <template>

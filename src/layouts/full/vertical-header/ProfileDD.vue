@@ -21,7 +21,6 @@ const greeting = computed(() => {
 function toggleLanguage() {
   const next = customizer.language === 'fa' ? 'en' : 'fa';
   customizer.SET_LANGUAGE(next);
-  customizer.SET_DIRECTION(next === 'fa' ? 'rtl' : 'ltr');
 }
 </script>
 

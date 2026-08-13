@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { shallowRef } from 'vue';
 import { IconArchive, IconCopy, IconDownload, IconFileExport } from '@tabler/icons-vue';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const items = shallowRef([
-  { title: 'Import Card', icon: IconDownload },
-  { title: 'Copy Data', icon: IconCopy },
-  { title: 'Export', icon: IconFileExport },
-  { title: 'Archive', icon: IconArchive }
+  { title: 'Import Card', icon: IconDownload }, { title: 'Copy Data', icon: IconCopy },
+  { title: 'Export', icon: IconFileExport }, { title: 'Archive', icon: IconArchive }
 ]);
 </script>
 
@@ -36,7 +36,7 @@ const items = shallowRef([
       <h2 class="text-h1 font-weight-medium">
          54,546,444 <a href="#"></a>
       </h2>
-      <span class="text-subtitle-1 text-medium-emphasis text-white">رسوب کل </span>
+      <span class="text-subtitle-1 text-medium-emphasis text-white">{{ t('dashboard.totalBalance') }}</span>
     </v-card-text>
   </v-card>
 </template>

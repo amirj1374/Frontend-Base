@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { Form } from 'vee-validate';
 import { useCustomizerStore } from '@amirjalili1374/ui-kit';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 
 const checkbox = ref(false);
 const valid = ref(false);
@@ -12,13 +13,11 @@ const password = ref('admin123');
 const username = ref('info@codedthemes.com');
 const router = useRouter();
 const customizer = useCustomizerStore();
-const passwordRules = ref([
-  (v: string) => !!v || 'رمز عبور وارد نشده است',
-  (v: string) => (v && v.length <= 10) || 'رمز عبور باید کمتر از 10 کاراکتر باشد'
-]);
+const { t } = useI18n();
+const passwordRules = computed(() => [(v: string) => !!v || t('login.passwordRequired'), (v: string) => (v && v.length <= 10) || t('login.passwordLength')]);
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-const emailRules = ref([(v: string) => !!v || 'نام کاربری را وارد نمایید', (v: string) => /.+@.+\..+/.test(v) || 'نام کاربری صحیح نمی باشد']);
+const emailRules = computed(() => [(v: string) => !!v || t('login.usernameRequired'), (v: string) => /.+@.+\..+/.test(v) || t('login.usernameInvalid')]);
 function validate(values: any, { setErrors }: any) {
   router.push('/approval');
   // const authStore = useAuthStore();
@@ -32,7 +31,7 @@ function validate(values: any, { setErrors }: any) {
     <v-text-field
       v-model="username"
       :rules="emailRules"
-      label="نام کاربری"
+      :label="t('login.username')"
       class="mt-4 mb-8"
       required
       density="comfortable"
@@ -43,7 +42,7 @@ function validate(values: any, { setErrors }: any) {
     <v-text-field
       v-model="password"
       :rules="passwordRules"
-      label="رمز عبور"
+      :label="t('login.password')"
       required
       density="comfortable"
       variant="outlined"
@@ -59,18 +58,18 @@ function validate(values: any, { setErrors }: any) {
       <v-checkbox
         v-model="checkbox"
         :rules="[(v: any) => !!v || 'You must agree to continue!']"
-        label="ذخیره رمز عبور"
+        :label="t('login.remember')"
         required
         color="primary"
         class="ms-n2"
         hide-details
       ></v-checkbox>
       <div class="">
-        <a href="javascript:void(0)" class="text-primary text-decoration-none">فراموشی رمز عبور</a>
+        <a href="javascript:void(0)" class="text-primary text-decoration-none">{{ t('login.forgot') }}</a>
       </div>
     </div>
     <v-btn color="secondary" :loading="isSubmitting" block class="mt-2" variant="flat" size="large" :disabled="valid" type="submit">
-      وارد شوید</v-btn
+      {{ t('login.submit') }}</v-btn
     >
     <div v-if="errors.apiError" class="mt-2">
       <v-alert color="error">{{ errors.apiError }}</v-alert>

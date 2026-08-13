@@ -1,5 +1,6 @@
 <script setup>
 import { IconSearch, IconAdjustmentsHorizontal, IconX } from '@tabler/icons-vue';
+import { useI18n } from 'vue-i18n';
 
 const props = defineProps({
   closesearch: {
@@ -7,13 +8,14 @@ const props = defineProps({
     required: false
   }
 });
+const { t } = useI18n();
 </script>
 
 <template>
   <!-- ---------------------------------------------- -->
   <!-- searchbar -->
   <!-- ---------------------------------------------- -->
-  <v-text-field persistent-placeholder placeholder="جستجو" color="primary" variant="outlined" hide-details>
+  <v-text-field persistent-placeholder :placeholder="t('common.search')" color="primary" variant="outlined" hide-details>
     <template v-slot:prepend-inner>
       <IconSearch stroke-width="1.5" size="17" class="text-lightText SearchIcon" />
     </template>
