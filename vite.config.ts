@@ -84,16 +84,19 @@ export default defineConfig(({ mode }) => {
             if (id.includes('/vuetify/')) return 'vuetify';
             if (id.includes('/apexcharts/') || id.includes('/vue3-apexcharts/')) return 'charts';
             if (/[\\/]node_modules[\\/](vue|vue-router|pinia|@vue|vue-demi)[\\/]/.test(id)) return 'vendor';
+          },
+          // Use Vite's native Oxc minifier. It preserves the previous production
+          // stripping policy without Terser's JavaScript dependency and shortens builds.
+          minify: {
+            compress: {
+              dropConsole: env.VITE_DEBUG !== 'true',
+              dropDebugger: env.VITE_DEBUG !== 'true'
+            },
+            mangle: true
           }
         }
       },
-      minify: 'terser',
-      terserOptions: {
-        compress: {
-          drop_console: env.VITE_DEBUG !== 'true',
-          drop_debugger: env.VITE_DEBUG !== 'true'
-        }
-      }
+      minify: 'oxc'
     },
     optimizeDeps: {
       exclude: ['vuetify', '@amirjalili1374/ui-kit'],

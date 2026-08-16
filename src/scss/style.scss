@@ -19,6 +19,17 @@
 @import 'vue3-perfect-scrollbar/style.css';
 @import '@amirjalili1374/ui-kit/dist/style.css';
 
+// The tonal ("flat") surface treatment intentionally lightens generic cards.
+// Keep the dashboard's primary summary card primary, otherwise its white
+// identity text loses contrast against the lightened card background.
+.surface-tonal .total-income > .v-card.bg-primary {
+  background: rgb(var(--v-theme-primary)) !important;
+}
+
+.surface-tonal .total-income > .v-card.bg-primary .text-h3 {
+  color: rgb(var(--v-theme-on-primary)) !important;
+}
+
 // Dashboard summary cards are a recognisable part of the shell. Make the
 // rounded surface visible there too; this is visual-only and scoped to that
 // one presentation mode.

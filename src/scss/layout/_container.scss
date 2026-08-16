@@ -173,12 +173,6 @@ $sizes: (
   font-weight: 300;
   font-style: normal;
 }
-@font-face {
-  font-family: 'Massir';
-  src: url('/src/assets/fonts/A Massir Spray.ttf') format('truetype');
-  font-weight: 300;
-  font-style: normal;
-}
 body {
   font-family: var(--font-theme), sans-serif;
 }
