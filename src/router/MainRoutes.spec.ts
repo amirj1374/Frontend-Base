@@ -3,9 +3,10 @@ import MainRoutes from './MainRoutes';
 import { ROUTE_NAMES, ROUTE_PATHS } from './names';
 
 describe('MainRoutes infrastructure contract', () => {
-  it('redirects /main to the base dashboard route', () => {
-    expect(MainRoutes.redirect).toEqual({ name: ROUTE_NAMES.dashboard });
-    expect(MainRoutes.children.some((route) => route.path === ROUTE_PATHS.dashboard)).toBe(true);
+  it('redirects the root entry points to the ISAS new-chat route', () => {
+    expect(MainRoutes.redirect).toEqual({ name: ROUTE_NAMES.isasChat });
+    const rootRoute = MainRoutes.children.find((route) => route.path === ROUTE_PATHS.dashboard);
+    expect(rootRoute?.redirect).toEqual({ name: ROUTE_NAMES.isasChat });
   });
 
   it('marks the business route tree as authenticated', () => {

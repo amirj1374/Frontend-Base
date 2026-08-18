@@ -1,6 +1,9 @@
 export const ROUTE_NAMES = {
   dashboard: 'Dashboard',
   componentShowcase: 'ComponentShowcase',
+  isasChat: 'IsasChat',
+  isasErd: 'IsasErd',
+  isasOrganization: 'IsasOrganization',
   facilities: 'Facilities',
   login: 'Login',
   forbidden: 'Forbidden',
@@ -10,6 +13,9 @@ export const ROUTE_NAMES = {
 export const ROUTE_PATHS = {
   dashboard: '/',
   componentShowcase: '/components',
+  isasChat: '/isas',
+  isasErd: '/isas/data-catalog',
+  isasOrganization: '/isas/organization-model',
   facilities: '/facilities',
   legacyMainFacilities: '/main/facilities',
   legacyApproval: '/approval',

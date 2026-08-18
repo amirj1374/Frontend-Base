@@ -13,6 +13,9 @@
  * A path not listed here (or undefined) is always accessible (e.g. dashboard).
  */
 export const PAGE_REQUIRED_PERMISSION: Readonly<Record<string, string | string[]>> = {
+  '/isas': 'isas:chat:view',
+  '/isas/data-catalog': 'isas:data:view',
+  '/isas/organization-model': 'isas:data:view',
   '/facilities': ['fac:due:view', 'fac:overdue:view'],
   '/guarantees': ['gt:paid:view', 'gt:unpaid:view'],
   '/currency-guarantees': ['cgt:paid:view', 'cgt:unpaid:view'],

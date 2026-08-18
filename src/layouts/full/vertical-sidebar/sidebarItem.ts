@@ -1,16 +1,4 @@
-import {
-  IconHome,
-  IconShieldCheck,
-  IconLoadBalancer,
-  IconShieldDollar,
-  IconFileCertificate,
-  IconFileInvoice,
-  IconArrowsRightLeft,
-  IconFileAlert,
-  IconSettings,
-  IconMessage,
-  IconMessageCode
-} from '@tabler/icons-vue';
+import { IconMessage, IconDatabase, IconTableShare } from '@tabler/icons-vue';
 import { useAccessStore } from '@/stores/access';
 import { requiredPermissionFor } from '@/config/pageAccess';
 import { i18n } from '@/i18n';
@@ -35,9 +23,19 @@ export interface menu {
 
 const sidebarItem: menu[] = [
   {
-    titleKey: 'navigation.dashboard',
-    icon: IconHome,
-    to: '/'
+    titleKey: 'navigation.isasChat',
+    icon: IconMessage,
+    to: '/isas'
+  },
+  {
+    titleKey: 'navigation.isasCatalog',
+    icon: IconDatabase,
+    to: '/isas/data-catalog'
+  },
+  {
+    titleKey: 'navigation.isasOrganization',
+    icon: IconTableShare,
+    to: '/isas/organization-model'
   },
 ];
 
@@ -49,6 +47,7 @@ const sidebarItem: menu[] = [
 export function getFilteredSidebarItems(): menu[] {
   // Establish a reactive dependency so labels refresh immediately on language change.
   const locale = i18n.global.locale.value;
+  void locale;
   const access = useAccessStore();
   access.ensureLoaded();
 
