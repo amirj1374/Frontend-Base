@@ -19,7 +19,7 @@ const levelLabels = { company: 'شرکت', deputy: 'معاونت', module: 'ما
       <span v-if="data.level === 'module' && data.description" class="node-description">{{ data.description }}</span>
       <span v-else-if="data.email" class="node-email"><IconMailbox :size="12" />{{ data.email }}</span>
     </div>
-    <span v-if="data.memberCount !== undefined" class="member-count">{{ data.memberCount }} زیرمجموعه</span>
+    <span v-if="data.memberCount !== undefined" class="member-count">{{ data.memberCount }} {{ data.memberLabel || 'زیرمجموعه' }}</span>
     <Handle id="bottom" type="source" :position="Position.Bottom" />
   </article>
 </template>

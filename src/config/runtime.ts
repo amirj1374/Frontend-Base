@@ -72,6 +72,12 @@ const normalizeAbsoluteUrl = (value: string, key: string): string => {
   }
 };
 
+const normalizeApiBaseUrl = (value: string): string => {
+  const normalized = value.trim();
+  if (normalized.startsWith('/')) return `/${normalized.replace(/^\/+|\/+$/g, '')}`;
+  return normalizeAbsoluteUrl(normalized, 'VITE_API_BASE_URL');
+};
+
 const normalizeAppBaseUrl = (value: string | undefined): string => {
   const base = read(value) ?? '/';
   if (/^https?:\/\//i.test(base)) return normalizeAbsoluteUrl(base, 'VITE_BASE_URL');
@@ -110,7 +116,7 @@ export const createRuntimeConfig = (env: RuntimeEnvironment): RuntimeConfig => {
   const devPermissionBypass = !env.PROD && ['dev', 'development'].includes(appEnv.toLowerCase()) && read(env.VITE_DEV_PERMISSION_BYPASS)?.toLowerCase() === 'true';
   if (devPermissionBypass && typeof console !== 'undefined') console.warn('[DEV] Frontend permission bypass is active');
   return Object.freeze({
-    apiBaseUrl: normalizeAbsoluteUrl(required(env, 'VITE_API_BASE_URL'), 'VITE_API_BASE_URL'),
+    apiBaseUrl: normalizeApiBaseUrl(required(env, 'VITE_API_BASE_URL')),
     appBaseUrl: normalizeAppBaseUrl(env.VITE_BASE_URL),
     authMode,
     keycloak: Object.freeze({

@@ -11,7 +11,7 @@ const newMessage = (role: ChatMessage['role'], content: string, status: ChatMess
 
 export const useIsasChatStore = defineStore('isas-chat', {
   state: () => ({
-    mode: 'D' as IsasMode,
+    mode: 'G' as IsasMode,
     selectedEntityValue: '',
     entities: [] as EntityOption[],
     messages: [] as ChatMessage[],
@@ -32,7 +32,7 @@ export const useIsasChatStore = defineStore('isas-chat', {
       return table && entity ? { table, entity } : undefined;
     },
     canSend(state): boolean {
-      return !state.streaming && (state.mode !== 'D' || Boolean(state.selectedEntityValue));
+      return !state.streaming;
     }
   },
   actions: {
@@ -47,6 +47,13 @@ export const useIsasChatStore = defineStore('isas-chat', {
     },
     setMessages(messages: ChatMessage[]) {
       this.messages = messages;
+    },
+    removeSession(sessionId: string) {
+      this.sessions = this.sessions.filter((session) => (session.sessionId || session.id) !== sessionId);
+    },
+    renameSession(sessionId: string, summary: string) {
+      const session = this.sessions.find((item) => (item.sessionId || item.id) === sessionId);
+      if (session) session.summary = summary;
     },
     appendUserMessage(content: string) {
       this.messages.push(newMessage('user', content, 'completed'));

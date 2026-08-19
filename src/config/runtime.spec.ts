@@ -50,6 +50,10 @@ describe('createRuntimeConfig', () => {
     );
   });
 
+  it('accepts a same-origin API proxy path', () => {
+    expect(createRuntimeConfig(validEnvironment({ VITE_API_BASE_URL: '/backend/' })).apiBaseUrl).toBe('/backend');
+  });
+
   it('requires Keycloak settings only in Keycloak mode', () => {
     expect(() => createRuntimeConfig(validEnvironment({ VITE_KEYCLOAK_REALM: undefined }))).toThrow(
       'VITE_KEYCLOAK_REALM'

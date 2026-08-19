@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, markRaw, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import dagre from '@dagrejs/dagre';
 import { Background } from '@vue-flow/background';
 import { Controls } from '@vue-flow/controls';
@@ -16,7 +16,6 @@ import CatalogInfoDialog from '../components/erd/CatalogInfoDialog.vue';
 import ErdTableNode from '../components/erd/ErdTableNode.vue';
 import RelationMappingDialog from '../components/erd/RelationMappingDialog.vue';
 import type { ErdRelationChange } from '../types/erd';
-import { mockCatalogEdges, mockCatalogNodes, mockEntityOptions } from '../mocks/erdCatalog';
 import '@vue-flow/core/dist/style.css';
 import '@vue-flow/core/dist/theme-default.css';
 import '@vue-flow/controls/dist/style.css';
@@ -24,12 +23,18 @@ import '@vue-flow/minimap/dist/style.css';
 
 const store = useIsasErdStore();
 const entityOptions = ref<EntityOption[]>([]);
+const entitySearch = ref('');
 const loadingEntities = ref(false);
-const usingMockData = ref(false);
+const savingChanges = ref(false);
+const saveNotice = ref('');
+const saveNoticeOpen = ref(false);
 const { fitView } = useVueFlow();
 const { can } = useAccess();
 const canEdit = can('isas:data:edit');
 let activeRequest: AbortController | null = null;
+let entityRequest: AbortController | null = null;
+let entitySearchTimer: number | null = null;
+let entityRequestId = 0;
 
 function layoutGraph(nodes: ErdNode[], edges: ErdEdge[]): { nodes: ErdNode[]; edges: ErdEdge[] } {
   const graph = new dagre.graphlib.Graph();
@@ -42,7 +47,7 @@ function layoutGraph(nodes: ErdNode[], edges: ErdEdge[]): { nodes: ErdNode[]; ed
   return {
     nodes: nodes.map((node) => {
       const position = graph.node(node.id);
-      return { ...node, type: 'erdTable', position: { x: position.x - 145, y: position.y - 45 } };
+      return { ...node, data: markRaw(node.data), type: 'erdTable', position: { x: position.x - 145, y: position.y - 45 } };
     }),
     edges: edges.map((edge) => ({
       ...edge,
@@ -52,35 +57,52 @@ function layoutGraph(nodes: ErdNode[], edges: ErdEdge[]): { nodes: ErdNode[]; ed
   };
 }
 
-async function loadEntities() {
+async function loadEntities(filter = '') {
+  const normalizedFilter = filter.trim();
+  if (normalizedFilter.length < 2) {
+    entityRequest?.abort();
+    entityOptions.value = [];
+    loadingEntities.value = false;
+    return;
+  }
+  entityRequest?.abort();
+  const requestController = new AbortController();
+  entityRequest = requestController;
+  const requestId = ++entityRequestId;
   loadingEntities.value = true;
   try {
-    entityOptions.value = await isasApi.searchErdEntities();
+    const entities = await isasApi.searchErdEntities(normalizedFilter, requestController.signal);
+    if (requestId === entityRequestId) {
+      entityOptions.value = entities.slice(0, 80);
+      store.errorMessage = '';
+    }
   } catch (error) {
-    entityOptions.value = mockEntityOptions;
-    usingMockData.value = true;
-    if (!store.nodes.length) await showMockGraph();
+    if (requestController.signal.aborted) return;
+    if (requestId === entityRequestId) {
+      entityOptions.value = [];
+      store.errorMessage = normalizeAppError(error).message;
+    }
   } finally {
-    loadingEntities.value = false;
+    if (requestId === entityRequestId) {
+      loadingEntities.value = false;
+      entityRequest = null;
+    }
   }
 }
 
-async function showMockGraph() {
-  usingMockData.value = true;
-  store.selectedEntity ||= mockEntityOptions[0].value;
-  const graph = layoutGraph(structuredClone(mockCatalogNodes), structuredClone(mockCatalogEdges));
-  store.replaceGraph(graph.nodes, graph.edges);
-  await nextTick();
-  await fitView({ padding: 0.16, duration: 350 });
-}
+watch(entitySearch, (filter) => {
+  const selectedTitle = entityOptions.value.find((item) => item.value === store.selectedEntity)?.title;
+  if (selectedTitle && filter === selectedTitle) return;
+  if (entitySearchTimer !== null) window.clearTimeout(entitySearchTimer);
+  if ((filter || '').trim().length < 2) {
+    void loadEntities(filter || '');
+    return;
+  }
+  entitySearchTimer = window.setTimeout(() => void loadEntities(filter || ''), 350);
+});
 
 async function loadGraph() {
   if (!store.selectedEntity) return;
-  if (usingMockData.value) {
-    store.settingsOpen = false;
-    await showMockGraph();
-    return;
-  }
   activeRequest?.abort();
   activeRequest = new AbortController();
   store.loading = true;
@@ -132,42 +154,58 @@ function buildChanges(): ErdRelationChange[] {
   for (const edge of store.originalEdges) {
     const current = store.edges.find((item) => item.id === edge.id);
     if (!current) {
-      changes.push({ operation: 'removed', source: edge.source, target: edge.target, sourceColumn: String(edge.data?.sourceColumn || ''), targetColumn: String(edge.data?.targetColumn || ''), edgeType: edge.type });
+      changes.push({ operation: 'removed', source: normalizeRelationNodeId(edge.source), target: normalizeRelationNodeId(edge.target), sourceColumn: String(edge.data?.sourceColumn || ''), targetColumn: String(edge.data?.targetColumn || ''), edgeType: edge.type });
     } else if (JSON.stringify(current.data) !== JSON.stringify(edge.data) || current.source !== edge.source || current.target !== edge.target) {
-      changes.push({ operation: 'modified', source: current.source, target: current.target, sourceColumn: String(current.data?.sourceColumn || ''), targetColumn: String(current.data?.targetColumn || ''), edgeType: current.type });
+      changes.push({ operation: 'modified', source: normalizeRelationNodeId(current.source), target: normalizeRelationNodeId(current.target), sourceColumn: String(current.data?.sourceColumn || ''), targetColumn: String(current.data?.targetColumn || ''), edgeType: current.type });
     }
   }
   for (const edge of store.edges.filter((item) => !store.originalEdges.some((original) => original.id === item.id))) {
-    changes.push({ operation: 'added', source: edge.source, target: edge.target, sourceColumn: String(edge.data?.sourceColumn || ''), targetColumn: String(edge.data?.targetColumn || ''), edgeType: edge.type });
+    changes.push({ operation: 'added', source: normalizeRelationNodeId(edge.source), target: normalizeRelationNodeId(edge.target), sourceColumn: String(edge.data?.sourceColumn || ''), targetColumn: String(edge.data?.targetColumn || ''), edgeType: edge.type });
   }
   return changes;
 }
 
+function normalizeRelationNodeId(nodeId: string) {
+  return nodeId.includes('/') ? nodeId.slice(nodeId.indexOf('/') + 1) : nodeId;
+}
+
+const pendingChanges = computed(() => buildChanges());
+const largeGraph = computed(() => store.nodes.length > 150 || store.edges.length > 250);
+
 async function saveChanges() {
-  const changes = buildChanges();
+  const changes = pendingChanges.value;
   if (!changes.length) return;
+  savingChanges.value = true;
+  store.errorMessage = '';
   try {
     await isasApi.saveErdChanges(changes);
     store.markSaved();
+    saveNotice.value = 'تغییرات ERD با موفقیت ذخیره شد.';
+    saveNoticeOpen.value = true;
   } catch (error) {
     store.errorMessage = normalizeAppError(error).message;
+  } finally {
+    savingChanges.value = false;
   }
 }
 
 onMounted(async () => {
-  if (import.meta.env.DEV) await showMockGraph();
-  await loadEntities();
+  store.settingsOpen = true;
 });
-onBeforeUnmount(() => activeRequest?.abort());
+onBeforeUnmount(() => {
+  activeRequest?.abort();
+  entityRequest?.abort();
+  if (entitySearchTimer !== null) window.clearTimeout(entitySearchTimer);
+});
 </script>
 
 <template>
   <section class="erd-page">
     <div class="erd-header">
-      <div><div class="title-row"><h1>دانشنامه داده</h1><v-chip v-if="usingMockData" size="small" color="warning" variant="tonal">داده نمایشی</v-chip></div><p>نمایش روابط Entityها و جداول لوتوس</p></div>
+      <div><div class="title-row"><h1>دانشنامه داده</h1></div><p>نمایش روابط Entityها و جداول لوتوس</p></div>
       <div class="d-flex ga-2">
-        <v-btn v-if="canEdit && !usingMockData && store.selectedEdgeId" :prepend-icon="IconTrash" color="error" variant="tonal" @click="store.removeSelectedEdge()">حذف رابطه</v-btn>
-        <v-btn v-if="canEdit && !usingMockData && store.nodes.length" :prepend-icon="IconDeviceFloppy" color="success" variant="tonal" @click="saveChanges">ذخیره تغییرات</v-btn>
+        <v-btn v-if="canEdit && store.selectedEdgeId" :prepend-icon="IconTrash" color="error" variant="tonal" @click="store.removeSelectedEdge()">حذف رابطه</v-btn>
+        <v-btn v-if="canEdit && store.nodes.length" :prepend-icon="IconDeviceFloppy" color="success" variant="tonal" :loading="savingChanges" :disabled="!pendingChanges.length" @click="saveChanges">ذخیره تغییرات <v-chip v-if="pendingChanges.length" size="x-small" class="ms-2">{{ pendingChanges.length }}</v-chip></v-btn>
         <v-btn :prepend-icon="IconRefresh" variant="tonal" :disabled="!store.selectedEntity" @click="loadGraph">بارگذاری مجدد</v-btn>
         <v-btn :prepend-icon="IconAdjustmentsHorizontal" color="primary" @click="store.settingsOpen = true">تنظیمات گراف</v-btn>
       </div>
@@ -176,11 +214,11 @@ onBeforeUnmount(() => activeRequest?.abort());
     <v-alert v-if="store.errorMessage" type="error" variant="tonal" closable @click:close="store.errorMessage = ''">{{ store.errorMessage }}</v-alert>
 
     <div class="flow-shell">
-      <VueFlow v-model:nodes="store.nodes" v-model:edges="store.edges" :min-zoom="0.1" :max-zoom="4" fit-view-on-init @connect="connectRelation" @edge-click="selectEdge">
+      <VueFlow v-model:nodes="store.nodes" v-model:edges="store.edges" :min-zoom="0.1" :max-zoom="4" :only-render-visible-elements="true" fit-view-on-init @connect="connectRelation" @edge-click="selectEdge">
         <template #node-erdTable="nodeProps"><ErdTableNode v-bind="nodeProps" /></template>
         <Background pattern-color="#64748b" :gap="20" />
         <Controls />
-        <MiniMap v-if="store.nodes.length" pannable zoomable />
+        <MiniMap v-if="store.nodes.length && !largeGraph" pannable zoomable />
       </VueFlow>
 
       <div v-if="!store.nodes.length && !store.loading" class="empty-state">
@@ -198,7 +236,7 @@ onBeforeUnmount(() => activeRequest?.abort());
     <v-dialog v-model="store.settingsOpen" max-width="560">
       <v-card title="تنظیمات دانشنامه داده">
         <v-card-text>
-          <v-autocomplete v-model="store.selectedEntity" :items="entityOptions" item-title="title" item-value="value" :loading="loadingEntities" label="موجودیت" clearable />
+          <v-autocomplete v-model="store.selectedEntity" v-model:search="entitySearch" :items="entityOptions" item-title="title" item-value="value" :loading="loadingEntities" label="موجودیت" hint="برای جستجو حداقل دو کاراکتر وارد کنید." no-data-text="نتیجه‌ای پیدا نشد" persistent-hint no-filter clearable />
           <v-slider v-model="store.relationDepth" class="mt-5" label="عمق روابط" :min="1" :max="10" :step="1" thumb-label />
         </v-card-text>
         <v-card-actions><v-spacer /><v-btn @click="store.settingsOpen = false">انصراف</v-btn><v-btn color="primary" :disabled="!store.selectedEntity" @click="loadGraph">نمایش گراف</v-btn></v-card-actions>
@@ -207,6 +245,7 @@ onBeforeUnmount(() => activeRequest?.abort());
 
     <CatalogInfoDialog />
     <RelationMappingDialog />
+    <v-snackbar v-model="saveNoticeOpen" color="success" timeout="3000">{{ saveNotice }}</v-snackbar>
   </section>
 </template>
 

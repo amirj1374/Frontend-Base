@@ -23,4 +23,26 @@ describe('createStreamEventParser', () => {
     parser.push('data: final');
     expect(parser.flush()).toEqual([{ event: 'message', data: 'final' }]);
   });
+
+  it('parses the nested JSON format returned by the ERD stream', () => {
+    const parser = createStreamEventParser();
+    const raw = [
+      'data:{"message":"خواندن اطلاعات جداول"}',
+      '',
+      'data:{"node":"{\\"id\\":\\"entities/grouptransfer\\",\\"type\\":\\"tableNode\\",\\"data\\":{\\"label\\":\\"GroupTransfer\\",\\"columns\\":[{\\"name\\":\\"ACCOUNT_ID\\"}]}}"}',
+      '',
+      'data:[DONE]',
+      ''
+    ].join('\n');
+
+    const events = [...parser.push(raw), ...parser.flush()];
+
+    expect(JSON.parse(events[0].data)).toEqual({ message: 'خواندن اطلاعات جداول' });
+    const payload = JSON.parse(events[1].data) as { node: string };
+    expect(JSON.parse(payload.node)).toMatchObject({
+      id: 'entities/grouptransfer',
+      data: { label: 'GroupTransfer' }
+    });
+    expect(events[2]).toEqual({ event: 'message', data: '[DONE]' });
+  });
 });

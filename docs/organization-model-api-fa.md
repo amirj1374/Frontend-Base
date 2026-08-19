@@ -1,15 +1,17 @@
 # مستند API مدل سازمانی
 
-## هدف
+## ۱. هدف و منطق مدل
 
-این API اطلاعات مدل سازمانی را برای نمایش در نمودار ERD برمی‌گرداند. ساختار داده از دو بخش اصلی تشکیل شده است:
+این API داده‌های لازم برای نمایش مدل سازمانی را برمی‌گرداند. برای جلوگیری از ابهام، اطلاعات در چهار بخش مستقل نگهداری می‌شوند:
 
-- `nodes`: موجودیت‌های سازمانی مانند شرکت، معاونت، ماژول، مدیر و کارشناس
-- `relations`: ارتباط میان موجودیت‌ها
+1. `units`: واحدهای سازمانی مانند شرکت، معاونت و ماژول
+2. `people`: اطلاعات اشخاص مانند نام، سمت و ایمیل
+3. `unitRelations`: ساختار والد و فرزندی واحدهای سازمانی
+4. `assignments`: انتصاب اشخاص به واحدها و ارتباط کارشناسان با مدیر مستقیم
 
-جدا بودن نودها و ارتباط‌ها باعث می‌شود یک ماژول بتواند به چند مدیر متصل باشد، بدون اینکه اطلاعات مدیر یا ماژول تکرار شود.
+در این مدل «معاونت» با «شخص معاون» و «ماژول» با «مدیر ماژول» یکی نیست. این جداسازی امکان تغییر افراد، انتصاب یک مدیر به چند ماژول و داشتن چند مدیر برای یک ماژول را فراهم می‌کند.
 
-## API پیشنهادی
+## ۲. مسیر پیشنهادی API
 
 ```http
 GET /api/v1/organization-model
@@ -22,6 +24,8 @@ HTTP/1.1 200 OK
 Content-Type: application/json
 ```
 
+## ۳. نمونه کامل پاسخ
+
 ```json
 {
   "data": {
@@ -32,236 +36,395 @@ Content-Type: application/json
       "managers": 10,
       "experts": 65
     },
-    "nodes": [
+    "units": [
       {
         "id": "company-1",
         "type": "company",
         "name": "شرکت فناوری اطلاعات پارسیان",
-        "title": "شرکت مادر",
-        "email": "info@parsian-tech.ir",
-        "description": null,
-        "directReportsCount": 3
+        "description": null
       },
       {
         "id": "deputy-1",
         "type": "deputy",
-        "name": "محمدرضا فرهمند",
-        "title": "معاونت فناوری و زیرساخت",
-        "email": "deputy1@parsian-tech.ir",
-        "description": null,
-        "directReportsCount": 12
+        "name": "معاونت فناوری و زیرساخت",
+        "description": null
       },
       {
         "id": "module-1",
         "type": "module",
-        "name": "ماژول زیرساخت ابری",
-        "title": "زیرمجموعه معاونت فناوری و زیرساخت",
-        "email": null,
-        "description": "مسئول توسعه و پشتیبانی خدمات زیرساخت ابری",
-        "directReportsCount": 2
+        "name": "زیرساخت ابری",
+        "description": "توسعه و پشتیبانی خدمات زیرساخت ابری"
       },
       {
-        "id": "manager-1",
-        "type": "manager",
-        "name": "سارا احمدی",
-        "title": "مدیر ماژول",
-        "email": "sara.ahmadi@parsian-tech.ir",
-        "description": null,
-        "directReportsCount": 7
-      },
-      {
-        "id": "expert-1",
-        "type": "expert",
-        "name": "مریم رضایی",
-        "title": "کارشناس زیرساخت ابری",
-        "email": "maryam.rezaei@parsian-tech.ir",
-        "description": null,
-        "directReportsCount": 0
+        "id": "module-2",
+        "type": "module",
+        "name": "امنیت اطلاعات",
+        "description": "توسعه و پشتیبانی خدمات امنیت اطلاعات"
       }
     ],
-    "relations": [
+    "people": [
       {
-        "id": "relation-1",
-        "sourceId": "company-1",
-        "targetId": "deputy-1",
-        "type": "contains"
+        "id": "person-1",
+        "fullName": "محمدرضا فرهمند",
+        "position": "معاون فناوری و زیرساخت",
+        "email": "m.farhamand@parsian-tech.ir"
       },
       {
-        "id": "relation-2",
-        "sourceId": "deputy-1",
-        "targetId": "module-1",
-        "type": "contains"
+        "id": "person-2",
+        "fullName": "سارا احمدی",
+        "position": "مدیر ماژول",
+        "email": "s.ahmadi@parsian-tech.ir"
       },
       {
-        "id": "relation-3",
-        "sourceId": "module-1",
-        "targetId": "manager-1",
-        "type": "managed_by"
+        "id": "person-3",
+        "fullName": "رضا کاظمی",
+        "position": "مدیر ماژول",
+        "email": "r.kazemi@parsian-tech.ir"
       },
       {
-        "id": "relation-4",
-        "sourceId": "manager-1",
-        "targetId": "expert-1",
-        "type": "supervises"
+        "id": "person-4",
+        "fullName": "مریم رضایی",
+        "position": "کارشناس زیرساخت ابری",
+        "email": "m.rezaei@parsian-tech.ir"
+      }
+    ],
+    "unitRelations": [
+      {
+        "id": "unit-relation-1",
+        "parentUnitId": "company-1",
+        "childUnitId": "deputy-1"
+      },
+      {
+        "id": "unit-relation-2",
+        "parentUnitId": "deputy-1",
+        "childUnitId": "module-1"
+      },
+      {
+        "id": "unit-relation-3",
+        "parentUnitId": "deputy-1",
+        "childUnitId": "module-2"
+      }
+    ],
+    "assignments": [
+      {
+        "id": "assignment-1",
+        "personId": "person-1",
+        "unitId": "deputy-1",
+        "role": "deputy_head",
+        "reportsToPersonId": null
+      },
+      {
+        "id": "assignment-2",
+        "personId": "person-2",
+        "unitId": "module-1",
+        "role": "module_manager",
+        "reportsToPersonId": "person-1"
+      },
+      {
+        "id": "assignment-3",
+        "personId": "person-3",
+        "unitId": "module-1",
+        "role": "module_manager",
+        "reportsToPersonId": "person-1"
+      },
+      {
+        "id": "assignment-4",
+        "personId": "person-4",
+        "unitId": "module-1",
+        "role": "expert",
+        "reportsToPersonId": "person-2"
       }
     ]
   },
   "meta": {
     "generatedAt": "2026-08-18T12:00:00Z",
-    "version": "1.0"
+    "version": "2.0"
   }
 }
 ```
 
-## ساختار اصلی پاسخ
+## ۴. ساختار اصلی پاسخ
 
 | فیلد | نوع | اجباری | توضیح |
 |---|---|---:|---|
-| `data` | object | بله | محتوای اصلی پاسخ |
-| `data.summary` | object | بله | تعداد کل موجودیت‌های هر لایه |
-| `data.nodes` | array | بله | لیست تمام موجودیت‌های سازمانی |
-| `data.relations` | array | بله | لیست ارتباط‌های میان نودها |
+| `data` | object | بله | محتوای مدل سازمانی |
+| `data.summary` | object | بله | تعداد موجودیت‌های قابل نمایش |
+| `data.units` | array | بله | شرکت، معاونت‌ها و ماژول‌ها |
+| `data.people` | array | بله | اطلاعات اشخاص سازمان |
+| `data.unitRelations` | array | بله | ساختار والد و فرزندی واحدها |
+| `data.assignments` | array | بله | انتصاب اشخاص به واحدها |
 | `meta.generatedAt` | ISO 8601 string | بله | زمان تولید پاسخ به‌صورت UTC |
-| `meta.version` | string | بله | نسخه قرارداد API |
+| `meta.version` | string | بله | نسخه قرارداد؛ برای این ساختار `2.0` است |
 
-## فیلدهای Summary
+آرایه‌های بدون داده باید به‌صورت `[]` ارسال شوند، نه `null`.
 
-| فیلد | توضیح |
+## ۵. Summary
+
+| فیلد | مبنای محاسبه |
 |---|---|
-| `companies` | تعداد شرکت‌ها |
-| `deputies` | تعداد معاونت‌ها |
-| `modules` | تعداد ماژول‌ها |
-| `managers` | تعداد مدیران ماژول |
-| `experts` | تعداد کارشناسان |
+| `companies` | تعداد واحدهای دارای `type: company` |
+| `deputies` | تعداد واحدهای دارای `type: deputy` |
+| `modules` | تعداد واحدهای دارای `type: module` |
+| `managers` | تعداد اشخاص یکتای دارای انتصاب `module_manager` |
+| `experts` | تعداد اشخاص یکتای دارای انتصاب `expert` |
 
-همه مقادیر این بخش عدد صحیح، صفر یا بزرگ‌تر هستند و باید با تعداد واقعی نودها مطابقت داشته باشند.
+اعداد Summary باید توسط بک‌اند از داده واقعی محاسبه شوند و با آرایه‌ها تطابق داشته باشند.
 
-## ساختار Node
+## ۶. واحد سازمانی ـ Unit
+
+```json
+{
+  "id": "module-1",
+  "type": "module",
+  "name": "زیرساخت ابری",
+  "description": "توسعه و پشتیبانی خدمات زیرساخت ابری"
+}
+```
 
 | فیلد | نوع | اجباری | توضیح |
 |---|---|---:|---|
-| `id` | string | بله | شناسه یکتا و پایدار نود |
-| `type` | enum | بله | نوع لایه سازمانی |
-| `name` | string | بله | نام شرکت، ماژول یا شخص |
-| `title` | string | بله | عنوان یا سمت سازمانی |
-| `email` | string/null | خیر | ایمیل سازمانی؛ برای ماژول مقدار `null` است |
-| `description` | string/null | خیر | توضیح کوتاه؛ بیشتر برای ماژول استفاده می‌شود |
-| `directReportsCount` | integer | بله | تعداد زیرمجموعه مستقیم این نود |
+| `id` | string | بله | شناسه یکتا و پایدار واحد |
+| `type` | enum | بله | نوع واحد سازمانی |
+| `name` | string | بله | نام رسمی واحد |
+| `description` | string/null | خیر | توضیح واحد؛ معمولاً برای ماژول استفاده می‌شود |
 
-### انواع Node
+### انواع واحد
 
-| مقدار | معنی | نمونه `name` | نمونه `title` |
-|---|---|---|---|
-| `company` | شرکت | شرکت فناوری اطلاعات پارسیان | شرکت مادر |
-| `deputy` | معاونت و شخص مسئول آن | محمدرضا فرهمند | معاونت فناوری و زیرساخت |
-| `module` | ماژول سازمانی | ماژول زیرساخت ابری | زیرمجموعه معاونت فناوری و زیرساخت |
-| `manager` | مدیر ماژول | سارا احمدی | مدیر ماژول |
-| `expert` | کارشناس | مریم رضایی | کارشناس زیرساخت ابری |
+| مقدار | معنی |
+|---|---|
+| `company` | شرکت |
+| `deputy` | معاونت |
+| `module` | ماژول سازمانی |
 
-## ساختار Relation
+نام ماژول در API بدون پیشوند اجباری «ماژول» ارسال می‌شود. فرانت‌اند در صورت نیاز این عنوان نمایشی را اضافه می‌کند.
+
+## ۷. شخص ـ Person
+
+```json
+{
+  "id": "person-2",
+  "fullName": "سارا احمدی",
+  "position": "مدیر ماژول",
+  "email": "s.ahmadi@parsian-tech.ir"
+}
+```
+
+| فیلد | نوع | اجباری | توضیح |
+|---|---|---:|---|
+| `id` | string | بله | شناسه یکتا و پایدار شخص؛ ترجیحاً شناسه پرسنلی غیرحساس |
+| `fullName` | string | بله | نام و نام خانوادگی |
+| `position` | string | بله | عنوان سمت سازمانی برای نمایش |
+| `email` | string/null | خیر | ایمیل سازمانی شخص |
+
+سمت نمایشی شخص در `position` قرار می‌گیرد، اما نقش فنی او در مدل از `assignments.role` مشخص می‌شود.
+
+## ۸. ارتباط واحدها ـ UnitRelation
+
+این بخش فقط ساختار سازمانی واحدها را مشخص می‌کند و نباید برای ارتباط اشخاص استفاده شود.
+
+```json
+{
+  "id": "unit-relation-2",
+  "parentUnitId": "deputy-1",
+  "childUnitId": "module-1"
+}
+```
 
 | فیلد | نوع | اجباری | توضیح |
 |---|---|---:|---|
 | `id` | string | بله | شناسه یکتای ارتباط |
-| `sourceId` | string | بله | شناسه نود مبدأ |
-| `targetId` | string | بله | شناسه نود مقصد |
-| `type` | enum | بله | نوع ارتباط |
+| `parentUnitId` | string | بله | شناسه واحد والد |
+| `childUnitId` | string | بله | شناسه واحد فرزند |
 
-### انواع Relation
+ارتباط‌های مجاز در نسخه فعلی:
 
-| مقدار | مبدأ | مقصد | معنی |
-|---|---|---|---|
-| `contains` | شرکت | معاونت | شرکت شامل معاونت است |
-| `contains` | معاونت | ماژول | معاونت شامل ماژول است |
-| `managed_by` | ماژول | مدیر | ماژول توسط مدیر اداره می‌شود |
-| `supervises` | مدیر | کارشناس | مدیر سرپرست کارشناس است |
+- `company → deputy`
+- `deputy → module`
 
-## نکته مهم درباره ارتباط ماژول و مدیر
+## ۹. انتصاب ـ Assignment
 
-ارتباط ماژول و مدیر چندبه‌چند است:
+Assignment مشخص می‌کند چه شخصی با چه نقشی در چه واحدی فعالیت دارد.
 
-- یک ماژول می‌تواند چند مدیر داشته باشد.
-- یک مدیر می‌تواند مسئول چند ماژول باشد.
+```json
+{
+  "id": "assignment-4",
+  "personId": "person-4",
+  "unitId": "module-1",
+  "role": "expert",
+  "reportsToPersonId": "person-2"
+}
+```
 
-بنابراین نباید `managerId` مستقیماً داخل رکورد ماژول قرار بگیرد. هر اتصال باید یک رکورد مستقل در `relations` با نوع `managed_by` باشد.
+| فیلد | نوع | اجباری | توضیح |
+|---|---|---:|---|
+| `id` | string | بله | شناسه یکتای انتصاب |
+| `personId` | string | بله | شناسه شخص موجود در `people` |
+| `unitId` | string | بله | شناسه واحد موجود در `units` |
+| `role` | enum | بله | نقش شخص در آن واحد |
+| `reportsToPersonId` | string/null | بله | مدیر مستقیم شخص؛ برای بالاترین سطح می‌تواند `null` باشد |
 
-نمونه اتصال یک ماژول به دو مدیر:
+### نقش‌های مجاز
+
+| مقدار | واحد مقصد معمول | معنی |
+|---|---|---|
+| `company_head` | company | مدیر شرکت |
+| `deputy_head` | deputy | مسئول یا معاون واحد معاونت |
+| `module_manager` | module | مدیر ماژول |
+| `expert` | module | کارشناس ماژول |
+
+## ۱۰. ارتباط چندبه‌چند مدیر و ماژول
+
+یک مدیر می‌تواند چند Assignment با `unitId`های متفاوت داشته باشد. همچنین چند مدیر می‌توانند برای یک `unitId` انتصاب `module_manager` داشته باشند.
+
+### یک ماژول با دو مدیر
 
 ```json
 [
   {
-    "id": "relation-10",
-    "sourceId": "module-1",
-    "targetId": "manager-1",
-    "type": "managed_by"
+    "id": "assignment-10",
+    "personId": "person-2",
+    "unitId": "module-1",
+    "role": "module_manager",
+    "reportsToPersonId": "person-1"
   },
   {
-    "id": "relation-11",
-    "sourceId": "module-1",
-    "targetId": "manager-2",
-    "type": "managed_by"
+    "id": "assignment-11",
+    "personId": "person-3",
+    "unitId": "module-1",
+    "role": "module_manager",
+    "reportsToPersonId": "person-1"
   }
 ]
 ```
 
-## قواعد اعتبارسنجی بک‌اند
+### یک مدیر برای دو ماژول
 
-1. مقدار `id` در `nodes` باید یکتا و پایدار باشد.
-2. مقدار `id` در `relations` باید یکتا باشد.
-3. هر `sourceId` و `targetId` باید به یک نود موجود اشاره کند.
-4. مقدار `type` نود فقط یکی از پنج مقدار تعریف‌شده باشد.
-5. مقدار `type` ارتباط فقط یکی از سه مقدار تعریف‌شده باشد.
-6. `directReportsCount` عدد صحیح و صفر یا بزرگ‌تر باشد.
-7. مقدار ایمیل ماژول باید `null` باشد؛ ماژول به‌جای ایمیل `description` دارد.
-8. کارشناس معمولاً `directReportsCount: 0` دارد.
-9. ارتباط تکراری با `sourceId`، `targetId` و `type` یکسان ارسال نشود.
-10. تعدادهای `summary` با داده واقعی `nodes` تطابق داشته باشند.
+```json
+[
+  {
+    "id": "assignment-12",
+    "personId": "person-2",
+    "unitId": "module-1",
+    "role": "module_manager",
+    "reportsToPersonId": "person-1"
+  },
+  {
+    "id": "assignment-13",
+    "personId": "person-2",
+    "unitId": "module-2",
+    "role": "module_manager",
+    "reportsToPersonId": "person-1"
+  }
+]
+```
 
-## جستجو در فرانت‌اند
+## ۱۱. نحوه محاسبه تعداد زیرمجموعه
 
-فرانت‌اند جستجو را روی این فیلدها انجام می‌دهد:
+`directReportsCount` از قرارداد حذف شده است تا عدد تکراری و ناسازگار تولید نشود.
 
-- `name`
-- `title`
-- `email`
-- `description`
+- زیرمجموعه مستقیم شرکت: تعداد `unitRelations` متصل به شرکت
+- زیرمجموعه مستقیم معاونت: تعداد ماژول‌های متصل به معاونت
+- تعداد مدیران ماژول: تعداد انتصاب‌های یکتای `module_manager` برای آن ماژول
+- زیرمجموعه مستقیم مدیر: تعداد Assignmentهایی که `reportsToPersonId` آن‌ها برابر شناسه مدیر است
+- زیرمجموعه کارشناس: صفر
 
-بنابراین بک‌اند فقط باید تمام داده‌ها را با همین ساختار برگرداند و برای جستجوی فعلی به API جداگانه نیاز نیست.
+فرانت‌اند می‌تواند این اعداد را از روابط محاسبه کند. در صورت نیاز به کارایی بیشتر، بک‌اند می‌تواند فیلدهای محاسبه‌شده را در API دیگری ارائه دهد، اما منبع اصلی حقیقت همان روابط هستند.
 
-## TypeScript Contract
+## ۱۲. قواعد اعتبارسنجی بک‌اند
+
+1. همه `id`ها در آرایه مربوط به خود یکتا و پایدار باشند.
+2. `parentUnitId` و `childUnitId` باید به واحد موجود اشاره کنند.
+3. `personId` باید در `people` وجود داشته باشد.
+4. `unitId` باید در `units` وجود داشته باشد.
+5. `reportsToPersonId` باید `null` یا شناسه یک شخص موجود باشد.
+6. شخص نباید مدیر مستقیم خودش باشد.
+7. ساختار واحدها نباید چرخه داشته باشد.
+8. یک واحد نباید هم‌زمان والد خودش باشد.
+9. ارتباط تکراری واحدها ارسال نشود.
+10. Assignment کاملاً تکراری برای یک `personId`، `unitId` و `role` ارسال نشود.
+11. نقش `deputy_head` فقط به واحد `deputy` متصل شود.
+12. نقش‌های `module_manager` و `expert` فقط به واحد `module` متصل شوند.
+13. ایمیل، در صورت وجود، فرمت معتبر داشته باشد.
+14. همه مقادیر متنی اصلی Trim شده و خالی نباشند.
+15. اعداد `summary` از داده واقعی محاسبه شوند.
+
+## ۱۳. جستجو در فرانت‌اند
+
+جستجو روی موارد زیر انجام می‌شود:
+
+- `units.name`
+- `units.description`
+- `people.fullName`
+- `people.position`
+- `people.email`
+
+در نسخه فعلی تمام داده‌ها یک‌جا دریافت و جستجو در فرانت‌اند انجام می‌شود. اگر حجم داده در آینده زیاد شد، API جداگانه زیر قابل اضافه‌شدن است:
+
+```http
+GET /api/v1/organization-model/search?q=سارا
+```
+
+## ۱۴. قرارداد TypeScript
 
 ```ts
-type OrganizationNodeType =
-  | 'company'
-  | 'deputy'
-  | 'module'
-  | 'manager'
+type OrganizationUnitType = 'company' | 'deputy' | 'module';
+
+type OrganizationRole =
+  | 'company_head'
+  | 'deputy_head'
+  | 'module_manager'
   | 'expert';
 
-type OrganizationRelationType =
-  | 'contains'
-  | 'managed_by'
-  | 'supervises';
-
-interface OrganizationNode {
+interface OrganizationUnit {
   id: string;
-  type: OrganizationNodeType;
+  type: OrganizationUnitType;
   name: string;
-  title: string;
-  email: string | null;
   description: string | null;
-  directReportsCount: number;
 }
 
-interface OrganizationRelation {
+interface OrganizationPerson {
   id: string;
-  sourceId: string;
-  targetId: string;
-  type: OrganizationRelationType;
+  fullName: string;
+  position: string;
+  email: string | null;
+}
+
+interface OrganizationUnitRelation {
+  id: string;
+  parentUnitId: string;
+  childUnitId: string;
+}
+
+interface OrganizationAssignment {
+  id: string;
+  personId: string;
+  unitId: string;
+  role: OrganizationRole;
+  reportsToPersonId: string | null;
+}
+
+interface OrganizationModelResponse {
+  data: {
+    summary: {
+      companies: number;
+      deputies: number;
+      modules: number;
+      managers: number;
+      experts: number;
+    };
+    units: OrganizationUnit[];
+    people: OrganizationPerson[];
+    unitRelations: OrganizationUnitRelation[];
+    assignments: OrganizationAssignment[];
+  };
+  meta: {
+    generatedAt: string;
+    version: '2.0';
+  };
 }
 ```
 
-## پاسخ خطا پیشنهادی
+## ۱۵. پاسخ خطا
 
 ```json
 {
@@ -274,7 +437,17 @@ interface OrganizationRelation {
 
 کدهای HTTP پیشنهادی:
 
-- `200`: دریافت موفق
-- `401`: کاربر احراز هویت نشده است
-- `403`: کاربر مجوز مشاهده مدل سازمانی را ندارد
-- `500`: خطای داخلی سرور
+| کد | معنی |
+|---:|---|
+| `200` | دریافت موفق |
+| `401` | کاربر احراز هویت نشده است |
+| `403` | کاربر مجوز مشاهده مدل سازمانی را ندارد |
+| `500` | خطای داخلی سرور |
+
+## ۱۶. نکات نهایی برای بک‌اند
+
+- ترتیب آرایه‌ها نباید مبنای تشخیص ارتباط باشد؛ تمام اتصال‌ها با شناسه انجام می‌شوند.
+- موقعیت گراف، رنگ، اندازه و چیدمان شعاعی مسئولیت فرانت‌اند است و نباید از بک‌اند ارسال شود.
+- شناسه‌ها پس از تغییر نام شخص یا واحد نباید عوض شوند.
+- اطلاعات سازمانی و اطلاعات اشخاص نباید در یک رکورد ادغام شوند.
+- منبع اصلی تعداد زیرمجموعه‌ها روابط و انتصاب‌ها هستند، نه یک عدد دستی.

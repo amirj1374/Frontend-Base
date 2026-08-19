@@ -24,7 +24,7 @@ const selectedPattern = ref<PatternId>(patternIds.includes(savedPattern as Patte
 let activeRequest: AbortController | null = null;
 let mentionTimer: number | null = null;
 
-const canSubmit = computed(() => Boolean(input.value.trim()) && !store.streaming);
+const canSubmit = computed(() => Boolean(input.value.trim()) && store.canSend);
 const mentionQuery = computed(() => {
   const at = input.value.lastIndexOf('@');
   if (at < 0) return '';
@@ -56,15 +56,6 @@ function handleViewportScroll() {
   const viewport = messageViewport.value;
   if (!viewport) return;
   showJumpToBottom.value = viewport.scrollHeight - viewport.scrollTop - viewport.clientHeight > 140;
-}
-
-async function loadModels() {
-  try {
-    store.models = await isasApi.getModels();
-    if (!store.selectedModel && store.models.length) store.selectedModel = store.models[0].model;
-  } catch {
-    store.models = [];
-  }
 }
 
 async function sendMessage() {
@@ -168,7 +159,6 @@ watch([mentionQuery, mentionCategory], () => {
 
 onMounted(() => {
   store.initialize();
-  void loadModels();
   void scrollToBottom();
 });
 

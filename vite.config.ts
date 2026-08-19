@@ -108,7 +108,16 @@ export default defineConfig(({ mode }) => {
       headers: {
         'Cross-Origin-Embedder-Policy': 'unsafe-none',
         'Cross-Origin-Opener-Policy': 'unsafe-none'
-      }
+      },
+      proxy: env.VITE_API_PROXY_TARGET
+        ? {
+            '/backend': {
+              target: env.VITE_API_PROXY_TARGET,
+              changeOrigin: true,
+              rewrite: (requestPath: string) => requestPath.replace(/^\/backend/, '')
+            }
+          }
+        : undefined
     },
     // Dynamic base URL based on environment
     base: env.VITE_BASE_URL || '/',

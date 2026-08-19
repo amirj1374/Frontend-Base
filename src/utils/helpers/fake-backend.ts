@@ -1,13 +1,5 @@
 export { fakeBackend };
 
-interface User {
-  id: number;
-  username: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-}
-
 // interface ResponseBody {
 //   id: number;
 //   username: string;
@@ -17,10 +9,6 @@ interface User {
 // }
 
 function fakeBackend() {
-  const users: User[] = [
-    { id: 1, username: 'info@codedthemes.com', password: 'admin123', firstName: 'Codedthemes', lastName: '.com' }
-  ];
-
   const customers = [
     {
       id: 1, firstName: 'امیر', lastName: 'جلیلی', nationalCode: '0018523897', personType: 'حقیقی',
@@ -31,37 +19,32 @@ function fakeBackend() {
 
   const realFetch = window.fetch;
 
-  window.fetch = function (url: string, opts: { method: string; headers: { [key: string]: string }; body?: string }) {
-    return new Promise<Response>((resolve, reject) => {
-      setTimeout(handleRoute, 500);
+  window.fetch = function (input: RequestInfo | URL, init?: RequestInit) {
+    const requestUrl = typeof input === 'string'
+      ? input
+      : input instanceof URL
+        ? input.href
+        : input.url;
+    const requestMethod = (init?.method || (input instanceof Request ? input.method : 'GET')).toUpperCase();
 
-      function handleRoute() {
-        switch (true) {
-          case url.endsWith('/customers/search') && opts.method === 'POST':
-            return searchCustomers();
-          default:
-            return realFetch(url, opts).then(resolve).catch(reject);
-        }
-      }
+    if (!requestUrl.endsWith('/customers/search') || requestMethod !== 'POST') {
+      return realFetch.call(window, input, init);
+    }
 
-      function searchCustomers() {
-        const { nationalCode, personType } = body();
+    return new Promise<Response>((resolve) => {
+      window.setTimeout(() => {
+        const requestBody = typeof init?.body === 'string' ? JSON.parse(init.body) : {};
+        const { nationalCode, personType } = requestBody;
         const results = customers.filter(
           (customer) =>
             (!nationalCode || customer.nationalCode.includes(nationalCode)) &&
             (!personType || customer.personType === personType)
         );
-        return ok(results);
-      }
-
-      function ok(body: any): void {
-        resolve(new Response(JSON.stringify(body), { status: 200, headers: { 'Content-Type': 'application/json' } }));
-      }
-
-
-      function body() {
-        return opts.body && JSON.parse(opts.body);
-      }
+        resolve(new Response(JSON.stringify(results), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' }
+        }));
+      }, 500);
     });
   } as typeof window.fetch;
 }
