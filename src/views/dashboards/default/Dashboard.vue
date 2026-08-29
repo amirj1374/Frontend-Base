@@ -58,11 +58,14 @@
 <script setup>
 import { useCustomerInfoStore } from '@/stores/customerInfo';
 import { useCustomizerStore } from '@amirjalili1374/ui-kit';
-import DataLabels from '@/views/dashboards/default/components/DataLabels.vue';
-import TotalGrowth from '@/views/dashboards/default/components/TotalGrowth.vue';
-import TotalIncome from '@/views/dashboards/default/components/TotalIncome.vue';
-import { computed } from 'vue';
+import { computed, defineAsyncComponent } from 'vue';
 import { useI18n } from 'vue-i18n';
+
+// Keep dashboard widgets out of the route's initial module graph. They load
+// only after the authenticated dashboard route itself is displayed.
+const DataLabels = defineAsyncComponent(() => import('@/views/dashboards/default/components/DataLabels.vue'));
+const TotalGrowth = defineAsyncComponent(() => import('@/views/dashboards/default/components/TotalGrowth.vue'));
+const TotalIncome = defineAsyncComponent(() => import('@/views/dashboards/default/components/TotalIncome.vue'));
 
 const customerInfoStore = useCustomerInfoStore();
 const customizer = useCustomizerStore();

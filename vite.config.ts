@@ -75,16 +75,9 @@ export default defineConfig(({ mode }) => {
           moduleSideEffects: (id: string) => !id.includes('@tabler/icons-vue')
         },
         output: {
-          // Rolldown (Vite 8) requires `manualChunks` as a function. This preserves the
-          // exact same three logical vendor chunks as the previous object form
-          // (vendor = vue/vue-router/pinia, vuetify, charts = apexcharts) by matching on
-          // node_modules package boundaries.
-          manualChunks(id: string) {
-            if (!id.includes('node_modules')) return;
-            if (id.includes('/vuetify/')) return 'vuetify';
-            if (id.includes('/apexcharts/') || id.includes('/vue3-apexcharts/')) return 'charts';
-            if (/[\\/]node_modules[\\/](vue|vue-router|pinia|@vue|vue-demi)[\\/]/.test(id)) return 'vendor';
-          },
+          // Let Vite derive chunks from the import graph. Explicit chunks can pull
+          // shared Vue runtime code into the ApexCharts chunk, which would make its
+          // lazy import download on pages that do not render any chart.
           // Use Vite's native Oxc minifier. It preserves the previous production
           // stripping policy without Terser's JavaScript dependency and shortens builds.
           minify: {

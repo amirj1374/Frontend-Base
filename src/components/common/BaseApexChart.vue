@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from 'vue';
-import VueApexCharts from 'vue3-apexcharts';
+import { defineAsyncComponent, ref, onMounted, nextTick } from 'vue';
+
+// ApexCharts is only used by dashboard widgets. Keeping this import async means
+// its sizeable runtime is not downloaded while users visit the rest of the app.
+const VueApexCharts = defineAsyncComponent(() => import('vue3-apexcharts'));
 
 /**
  * Safe wrapper around vue3-apexcharts.
