@@ -3,22 +3,22 @@
   "version": "1.2.1",
   "private": true,
   "type": "module",
-  "packageManager": "npm@11.16.0",
+  "packageManager": "bun@1.4.0",
   "engines": {
     "node": "^20.19.0 || >=22.12.0",
-    "npm": ">=10.0.0"
+    "bun": ">=1.4.0"
   },
   "scripts": {
     "dev": "vite --mode dev",
     "dev:prelive": "vite --mode prelive",
     "dev:live": "vite --mode live",
     "dev:demo": "vite --mode demo --host",
-    "build": "npm run typecheck && vite build --mode dev",
-    "build:dev": "npm run typecheck && vite build --mode dev",
-    "build:prelive": "npm run typecheck && vite build --mode prelive",
-    "build:live": "npm run typecheck && vite build --mode live",
-    "build:demo": "npm run typecheck && vite build --mode demo",
-    "build:analyze": "npm run build && npx vite-bundle-analyzer dist/stats.html",
+    "build": "bun run typecheck && vite build --mode dev",
+    "build:dev": "bun run typecheck && vite build --mode dev",
+    "build:prelive": "bun run typecheck && vite build --mode prelive",
+    "build:live": "bun run typecheck && vite build --mode live",
+    "build:demo": "bun run typecheck && vite build --mode demo",
+    "build:analyze": "bun run build && bunx vite-bundle-analyzer dist/stats.html",
     "preview": "vite preview --port 5050 --host",
     "preview:dev": "vite preview --port 5050 --host",
     "preview:prelive": "vite preview --port 5050 --host",
@@ -26,7 +26,7 @@
     "preview:demo": "vite preview --port 9090 --host",
     "typecheck": "vue-tsc --noEmit",
     "typecheck:watch": "vue-tsc --noEmit --watch",
-    "lint": "npm run lint:check",
+    "lint": "bun run lint:check",
     "lint:check": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write \"src/**/*.{js,ts,vue,scss,css,json}\"",
@@ -35,7 +35,7 @@
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
-    "validate": "npm run lint:check && npm run typecheck && npm run test:coverage && npm run build",
+    "validate": "bun run lint:check && bun run typecheck && bun run test:coverage && bun run build",
     "clean": "rimraf dist node_modules/.vite"
   },
   "dependencies": {

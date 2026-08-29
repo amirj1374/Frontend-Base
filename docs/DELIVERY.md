@@ -4,12 +4,12 @@ This branch is the infrastructure foundation for `vosool-frontend`. It does not 
 
 ## Prepare a workstation
 
-1. Install Node 22.12.0 and npm 11. The supported Node range is `^20.19.0 || >=22.12.0`.
-2. Run `npm ci` from the repository root. Do not use another package manager or regenerate the lockfile during ordinary setup.
+1. Install Bun 1.4.0 or newer.
+2. Run `bun install --frozen-lockfile` from the repository root. Do not use another package manager or regenerate the lockfile during ordinary setup.
 3. Copy `.env.example` to the appropriate local Vite environment file.
 4. Supply public environment values for the selected authentication mode. Never place a client secret or credential in a `VITE_*` variable.
-5. Run `npm run validate` before starting feature work.
-6. Start the application with `npm run dev`.
+5. Run `bun run validate` before starting feature work.
+6. Start the application with `bun run dev`.
 
 ## Required configuration
 
@@ -37,10 +37,10 @@ Missing API or Keycloak-required values stop startup with `RuntimeConfigurationE
 A candidate is ready for team review only when these commands pass from a clean checkout:
 
 ```bash
-npm ci
-npm run validate
-npm run build:prelive
-npm run build:live
+bun install --frozen-lockfile
+bun run validate
+bun run build:prelive
+bun run build:live
 git diff --check
 git status --short
 ```
@@ -134,7 +134,7 @@ Logout/reset must clear the access snapshot. Permission strings and backend role
 - `xlsx@0.18.5` is a direct dependency and is also used by `@amirjalili1374/ui-kit@1.9.2`; it has two high-severity advisories with no compatible registry fix. The offered force-fix downgrades UI Kit to `1.5.85` and is rejected.
 - `happy-dom@15.11.7` is a development-only test dependency (also selected by Vitest) with critical advisories. The offered `20.11.1` update is a breaking major change and requires a separate test-environment migration.
 - Patched `brace-expansion` resolutions are `1.1.18` and `2.1.4`; its prior advisory is resolved.
-- Never run `npm audit fix --force`.
+- Never use an automatic dependency upgrade with force flags.
 - The consumed UI Kit DataTable does not provide latest-request-wins behavior or remote sorting.
 - Real-browser automation and deployment automation are not included in this phase.
 - No SSR support is claimed.

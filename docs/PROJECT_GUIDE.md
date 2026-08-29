@@ -3,9 +3,8 @@
 ## شروع سریع
 
 ```bash
-nvm use
-npm ci
-npm run dev
+bun install --frozen-lockfile
+bun run dev
 ```
 
 محیط توسعه روی `http://localhost:2000` اجرا می‌شود. مقادیر محیطی public هستند؛ هرگز token، password یا client secret را در متغیرهای `VITE_*` قرار ندهید.
@@ -14,12 +13,12 @@ npm run dev
 
 | فرمان | کاربرد |
 | --- | --- |
-| `npm run lint:check` | lint بدون تغییر فایل |
-| `npm run typecheck` | کنترل TypeScript و Vue |
-| `npm test` | تست واحد |
-| `npm run build` | build محیط dev |
-| `npm run build:prelive` | build prelive |
-| `npm run build:live` | build live |
+| `bun run lint:check` | lint بدون تغییر فایل |
+| `bun run typecheck` | کنترل TypeScript و Vue |
+| `bun run test` | تست واحد |
+| `bun run build` | build محیط dev |
+| `bun run build:prelive` | build prelive |
+| `bun run build:live` | build live |
 | `git diff --check` | کنترل whitespace قبل از commit |
 
 ## معماری در یک نگاه

@@ -49,7 +49,7 @@ All `VITE_*` values are visible to browser users. A Keycloak public client ID is
 
 ## CI
 
-GitLab CI installs exclusively from `package-lock.json`, then runs non-mutating lint, type checking, tests, coverage, and live/prelive builds. It retains coverage and production build artifacts temporarily. CI runtime values must be supplied as protected or project variables where appropriate; names match the environment list above.
+GitLab CI installs exclusively from `bun.lock`, then runs non-mutating lint, type checking, tests, coverage, and live/prelive builds. It retains coverage and production build artifacts temporarily. CI runtime values must be supplied as protected or project variables where appropriate; names match the environment list above.
 
 There are no deployment, publication, tagging, or release jobs in this foundation.
 

@@ -73,9 +73,9 @@ const filteredMenu = computed(() => getFilteredSidebarItems());
 ## 7. تست feature جدید
 
 ```bash
-npm run typecheck
-npm test
-npm run build
+bun run typecheck
+bun run test
+bun run build
 git diff --check
 ```
 

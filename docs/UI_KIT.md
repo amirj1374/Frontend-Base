@@ -3,7 +3,7 @@
 پکیج استاندارد پروژه:
 
 ```bash
-npm install @amirjalili1374/ui-kit@1.10.0 --save-exact
+bun add @amirjalili1374/ui-kit@1.10.0 --exact
 ```
 
 همیشه از package root import کنید:

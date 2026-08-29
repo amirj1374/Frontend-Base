@@ -9,8 +9,8 @@
 
 ## قراردادهای مهم
 
-- از Node نسخهٔ درج‌شده در `.nvmrc` و فقط npm استفاده کنید.
-- نصب تکرارپذیر: `npm ci`.
+- از Bun مطابق `.bun-version` استفاده کنید.
+- نصب تکرارپذیر: `bun install --frozen-lockfile`.
 - UI Kit فقط از پکیج منتشرشده مصرف می‌شود: `@amirjalili1374/ui-kit@1.10.0`.
 - مسیر داخلی یا import از سورس UI Kit مجاز نیست.
 - endpoint، DTO، permission code و رفتار صفحه‌های کسب‌وکار را هنگام کار زیرساختی تغییر ندهید.

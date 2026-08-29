@@ -13,7 +13,7 @@ import { i18n } from '@/i18n';
 import { UiKitPlugin } from '@amirjalili1374/ui-kit';
 
 export function registerStatePlugin(app: App, pinia: Pinia): void {
-  // Pinia is a Vue plugin at runtime. The cast keeps local `npm link` builds
+  // Pinia is a Vue plugin at runtime. The cast keeps local linked-package builds
   // type-safe when the linked UI Kit resolves Vue's plugin type separately.
   app.use(pinia as unknown as Plugin);
 }

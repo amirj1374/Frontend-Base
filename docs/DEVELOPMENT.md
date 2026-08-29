@@ -2,7 +2,7 @@
 
 ## Toolchain
 
-Use Node `22.12.0` (the `.nvmrc` baseline) and npm 11. The supported engine range also permits Node `^20.19.0` or newer compatible Node releases. Use `npm ci` from the committed lockfile for reproducible validation.
+Use Bun `1.4.0` or newer. Use `bun install --frozen-lockfile` from the committed lockfile for reproducible validation.
 
 Copy `.env.example` to the mode-specific Vite file needed locally and replace placeholders. Never commit credentials or client secrets. Vite browser variables are public.
 
@@ -10,16 +10,16 @@ Copy `.env.example` to the mode-specific Vite file needed locally and replace pl
 
 | Command | Purpose |
 | --- | --- |
-| `npm run dev` | Start development mode |
-| `npm run lint:check` | Non-mutating lint gate |
-| `npm run lint:fix` | Apply lint fixes locally |
-| `npm run typecheck` | Check Vue and TypeScript |
-| `npm run test:run` | Run unit tests once |
-| `npm run test:coverage` | Run tests with coverage |
-| `npm run build` | Typecheck and build development mode |
-| `npm run build:prelive` | Typecheck and build prelive mode |
-| `npm run build:live` | Typecheck and build live mode |
-| `npm run validate` | Run lint, types, tests, and the default build |
+| `bun run dev` | Start development mode |
+| `bun run lint:check` | Non-mutating lint gate |
+| `bun run lint:fix` | Apply lint fixes locally |
+| `bun run typecheck` | Check Vue and TypeScript |
+| `bun run test:run` | Run unit tests once |
+| `bun run test:coverage` | Run tests with coverage |
+| `bun run build` | Typecheck and build development mode |
+| `bun run build:prelive` | Typecheck and build prelive mode |
+| `bun run build:live` | Typecheck and build live mode |
+| `bun run validate` | Run lint, types, tests, and the default build |
 
 ## Change boundaries
 
