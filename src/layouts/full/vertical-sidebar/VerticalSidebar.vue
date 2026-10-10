@@ -14,7 +14,10 @@ const route = useRoute();
 const customerInfo = useCustomerInfoStore();
 const { width: viewportWidth } = useDisplay();
 const isMobileDrawer = computed(() => viewportWidth.value < 1280);
-const mobileDrawerWidth = computed(() => Math.max(0, Math.min(viewportWidth.value - 16, 400)));
+const mobileDrawerWidth = computed(() => {
+  if (viewportWidth.value < 600) return Math.max(280, Math.min(viewportWidth.value * 0.88, 360));
+  return Math.max(320, Math.min(viewportWidth.value - 32, 400));
+});
 
 function closeMobileDrawer() {
   if (isMobileDrawer.value) customizer.SET_SIDEBAR_DRAWER(false);
@@ -64,6 +67,7 @@ function hasActiveChild(children: menu[]): boolean {
     elevation="0" rail-width="78" mobile-breakpoint="lg" app
     :width="isMobileDrawer ? mobileDrawerWidth : undefined"
     :temporary="isMobileDrawer"
+    :scrim="isMobileDrawer"
     :rail="!isMobileDrawer && customizer.mini_sidebar"
     :class="['rightSidebar', { 'sidebar-closed': !customizer.Sidebar_drawer }]"
   >

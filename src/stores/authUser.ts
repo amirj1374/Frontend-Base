@@ -7,8 +7,7 @@ import runtimeConfig from '@/config/runtime';
 
 const baseUrl = `${runtimeConfig.apiBaseUrl}/users`;
 
-export const useUsersStore = defineStore({
-  id: 'Authuser',
+export const useUsersStore = defineStore('Authuser', {
   state: () => ({
     users: {},
     currentUserInfo: null as UserInfoResponse | null

@@ -32,7 +32,7 @@
               :api-resource="props.apiUrl"
               :auto-fetch="false"
               :show-pagination="true"
-              :height="360"
+              :height="300"
               :axiosInstance="localAxiosInstance"
               inlineFilter
               :uniqueKey="props.uniqueKey"
@@ -204,7 +204,7 @@ defineExpose({ openDrawer, closeDrawer });
 
 .drawer-main {
   width: 100%;
-  padding: 20px;
+  padding: 10px 14px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -225,6 +225,7 @@ defineExpose({ openDrawer, closeDrawer });
 }
 
 :deep(.data-table-container) {
-  height: 20% !important;
+  height: auto !important;
+  min-height: 0 !important;
 }
 </style>

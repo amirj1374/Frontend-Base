@@ -26,13 +26,13 @@ import vuetify from '@/plugins/vuetify';
 import { useCustomizerStore } from '@amirjalili1374/ui-kit';
 import { ref, watch } from 'vue';
 const currentTheme = useCustomizerStore();
-const currentColorText = ref(vuetify.theme.themes.value[currentTheme.actTheme].colors.primary);
+const currentColorText = ref(String(vuetify.theme.themes.value[currentTheme.actTheme].colors.primary));
 
 watch(
   () => currentTheme.getActTheme,
   (newTheme) => {
     if (newTheme) {
-      currentColorText.value = vuetify.theme.themes.value[newTheme].colors.primary;
+      currentColorText.value = String(vuetify.theme.themes.value[newTheme].colors.primary);
     }
     console.log(newTheme);
   }

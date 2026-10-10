@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router';
-import { computed } from 'vue';
 import VerticalSidebarVue from './vertical-sidebar/VerticalSidebar.vue';
 import VerticalHeaderVue from './vertical-header/VerticalHeader.vue';
 import Customizer from './customizer/CustomizerPanel.vue';
@@ -9,18 +8,13 @@ import { Loading } from '@amirjalili1374/ui-kit';
 
 const customizer = useCustomizerStore();
 
-// Computed property to ensure sidebar is shown
-const showSidebar = computed(() => {
-  const orientation = customizer.menuOrientation || 'vertical';
-  return orientation === 'vertical';
-});
 </script>
 
 <template>
   <v-locale-provider :rtl="customizer.direction === 'rtl'">
     <v-app
       :theme="customizer.actTheme"
-      :class="[customizer.fontTheme, `surface-${customizer.surfaceStyle}`, customizer.mini_sidebar ? 'mini-sidebar' : '', customizer.inputBg ? 'inputWithbg' : '']"
+      :class="[customizer.fontTheme, `surface-${customizer.surfaceStyle}`, customizer.mini_sidebar ? 'mini-sidebar' : '', customizer.inputBg ? 'inputWithbg' : '', customizer.compactHeader ? 'compact-header' : '']"
     >
       <Customizer />
       <!-- Show sidebar when menu orientation is vertical -->
@@ -57,8 +51,36 @@ const showSidebar = computed(() => {
 .v-main {
   /* v-main owns the RTL page scrollbar. Keep its scroll rail below the fixed
      80px header instead of allowing it to run behind the app bar. */
-  height: calc(100vh - 80px);
-  margin-top: 80px;
+  height: calc(100vh - var(--app-header-height, 80px));
+  margin-top: var(--app-header-height, 80px);
   padding-top: 0 !important;
+}
+
+.v-application {
+  --app-header-height: 80px;
+}
+
+.v-application.compact-header {
+  --app-header-height: 56px;
+}
+
+@media (max-width: 600px) {
+  .v-application {
+    --app-header-height: 56px;
+  }
+}
+
+.v-application.compact-header .app-header.topbar,
+.v-application.compact-header .app-header.topbar.v-toolbar {
+  height: var(--app-header-height) !important;
+  min-height: var(--app-header-height) !important;
+}
+
+.v-application.compact-header .app-header.topbar {
+  padding-block: 0 !important;
+}
+
+.v-application.compact-header .app-header.topbar .v-toolbar__content {
+  height: var(--app-header-height) !important;
 }
 </style>

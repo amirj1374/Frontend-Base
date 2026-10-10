@@ -19,6 +19,6 @@ const currentTheme = useCustomizerStore();
 const currentColorText = computed(() => {
   if (currentTheme.surfaceStyle === 'premium-executive') return '#F5F7FA';
 
-  return vuetify.theme.themes.value[currentTheme.actTheme]?.colors.darkText ?? '#1F2937';
+  return String(vuetify.theme.themes.value[currentTheme.actTheme]?.colors.darkText ?? '#1F2937');
 });
 </script>

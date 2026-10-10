@@ -8,8 +8,7 @@ export interface MenuPermission {
   requiredLotusRoles?: string[];
 }
 
-export const usePermissionsStore = defineStore({
-  id: 'permissions',
+export const usePermissionsStore = defineStore('permissions', {
   state: () => ({
     menuPermissions: [
       {

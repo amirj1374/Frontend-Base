@@ -1,7 +1,7 @@
 import { defineConfig, loadEnv, type ViteDevServer } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import vuetify from 'vite-plugin-vuetify';
-import path from 'path';
+import path from 'node:path';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -42,12 +42,12 @@ export default defineConfig(({ mode }) => {
       // consumer; otherwise Pinia sees a different active instance at startup.
       dedupe: ['vue', 'pinia', 'vuetify'],
       alias: {
-        '@': path.resolve(__dirname, './src'),
+        '@': path.resolve(import.meta.dirname, './src'),
         // SheetJS (xlsx) references these Node builtins but never uses them in the
         // browser. Shim them to an empty module to silence Vite's
         // "Module … has been externalized for browser compatibility" warnings.
-        stream: path.resolve(__dirname, './src/shims/empty.ts'),
-        fs: path.resolve(__dirname, './src/shims/empty.ts')
+        stream: path.resolve(import.meta.dirname, './src/shims/empty.ts'),
+        fs: path.resolve(import.meta.dirname, './src/shims/empty.ts')
       }
     },
     build: {
@@ -100,6 +100,30 @@ export default defineConfig(({ mode }) => {
     },
     optimizeDeps: {
       exclude: ['vuetify', '@amirjalili1374/ui-kit'],
+      // The UI Kit stays unbundled so it shares Vue/Pinia/Vuetify singletons,
+      // but highlight.js is CommonJS and must be converted by Vite for dev.
+      include: [
+        'highlight.js/lib/core',
+        'highlight.js/lib/languages/bash',
+        'highlight.js/lib/languages/c',
+        'highlight.js/lib/languages/cpp',
+        'highlight.js/lib/languages/css',
+        'highlight.js/lib/languages/csharp',
+        'highlight.js/lib/languages/dockerfile',
+        'highlight.js/lib/languages/go',
+        'highlight.js/lib/languages/java',
+        'highlight.js/lib/languages/javascript',
+        'highlight.js/lib/languages/json',
+        'highlight.js/lib/languages/kotlin',
+        'highlight.js/lib/languages/php',
+        'highlight.js/lib/languages/powershell',
+        'highlight.js/lib/languages/python',
+        'highlight.js/lib/languages/rust',
+        'highlight.js/lib/languages/sql',
+        'highlight.js/lib/languages/typescript',
+        'highlight.js/lib/languages/xml',
+        'highlight.js/lib/languages/yaml'
+      ],
       entries: ['./src/**/*.vue']
     },
     server: {

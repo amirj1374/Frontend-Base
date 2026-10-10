@@ -42,8 +42,7 @@ function decodeJwt(token: string): UserClaims | null {
   }
 }
 
-export const useAuthStore = defineStore({
-  id: 'auth',
+export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: JSON.parse(localStorage.getItem('user') || 'null'),
     claims: JSON.parse(localStorage.getItem('claims') || 'null') as UserClaims | null,

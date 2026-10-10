@@ -18,7 +18,7 @@ const showFilters = ref(true);
 const showConfirmation = ref(false);
 const showNotifications = ref(false);
 const { t } = useI18n();
-const files = computed<PreviewFile[]>(() => [{ id: 1, name: t('showcase.guide'), type: 'PDF', size: '1.2 MB' }, { id: 2, name: t('showcase.sampleImage'), type: 'PNG', size: '420 KB' }]);
+const files = ref<PreviewFile[]>([{ id: 1, name: t('showcase.guide'), type: 'PDF', size: '1.2 MB' }, { id: 2, name: t('showcase.sampleImage'), type: 'PNG', size: '420 KB' }]);
 const notifications = ref<AppNotification[]>([]);
 const localizedNotifications = computed<AppNotification[]>(() => notifications.value.length ? notifications.value : [
   { id: 1, title: t('showcase.saved'), description: t('showcase.savedDescription'), time: t('showcase.now'), read: false },
@@ -61,7 +61,7 @@ const localizedNotifications = computed<AppNotification[]>(() => notifications.v
 
       <v-card class="showcase__card">
         <v-card-title>{{ t('showcase.files') }}</v-card-title>
-        <v-card-text><AppFilePreview :files="files" removable downloadable @remove="file => files = files.filter(item => item.id !== file.id)" @download="undefined" /></v-card-text>
+        <v-card-text><AppFilePreview :files="files" removable downloadable @remove="file => files = files.filter(item => item.id !== file.id)" @download="() => undefined" /></v-card-text>
       </v-card>
 
       <v-card class="showcase__card"><AppEmptyState :title="t('showcase.emptyTitle')" :description="t('showcase.emptyDescription')" :action-text="t('showcase.create')" @action="showConfirmation = true" /></v-card>
